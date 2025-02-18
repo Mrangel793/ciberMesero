@@ -86,9 +86,14 @@
 
 <script lang="ts" setup>
 
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/firebaseConfig';
+import { signInWithEmailAndPassword, getAuth  } from 'firebase/auth';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { ref } from 'vue';
+
+const auth = getAuth();
+const db = getFirestore();
+
+export const userRole = ref(null);
 
 const email = ref('');
 const password = ref('');
@@ -98,17 +103,44 @@ const login = async () => {
     errorMessage.value = '';
 
     try {
-        await signInWithEmailAndPassword(auth, email.value, password.value);
+        const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
+        const user = userCredential.user;
+        console.log('Usuario autenticado con UID:', user.uid);
         console.log('User logged in');
+
+        // 1. Obtener el UID del usuario autenticado
+        const uid = user.uid;
+
+        // 2. Consultar Firestore para obtener el documento del usuario
+        const userDocRef = doc(db, 'users', uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            const fetchedUserRole = userData.role; // Obtiene el rol del documento
+            console.log('Rol del usuario obtenido de Firestore:', fetchedUserRole);
+
+            // 3. Guardar el rol en la ref 'userRole' (estado local del componente)
+            userRole.value = fetchedUserRole; // Asigna el rol a la ref 'userRole'
+
+        } else {
+            console.error('Documento de usuario no encontrado en Firestore para UID:', uid);
+            errorMessage.value = 'Error al obtener información del usuario.';
+            userRole.value = null; // Asegúrate de resetear userRole en caso de error
+            return; // Importante salir de la función si no se encuentra el documento
+        }
+
     } catch (error: any) {
         console.error('Error al iniciar sesión:', error.code, error.message);
         errorMessage.value = error.message;
+        userRole.value = null; // Asegúrate de resetear userRole en caso de error
     }
     return {
         email,
         password,
         errorMessage,
-        login
+        login,
+        userRole
     }
 };
 
