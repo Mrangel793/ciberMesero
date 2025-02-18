@@ -1,9 +1,10 @@
 <template>
   <div class="w-full">
     <!-- Sección Hero con fondo gradiente -->
-    <div class="relative w-full">
+    <div class="relative w-full overflow-hidden h-[40rem]">
+      <!-- Fondo Degradado -->
       <div
-        class="absolute inset-0 bg-[linear-gradient(to_bottom,#181818_0%,#E67300)] rounded-b-[80px] sm:rounded-b-[150px]">
+        class="absolute inset-0 bg-[linear-gradient(to_bottom,#181818_0%,#E67300_80%)] rounded-b-[50%] w-[110%] scale-x-[1.5] h-[40rem] left-[-5%]">
       </div>
 
       <!-- Header -->
@@ -16,8 +17,8 @@
 
         <div class="hidden lg:flex lg:gap-x-12">
           <a href="#" class="font-semibold text-white">INICIO</a>
-          <a href="#" class="font-semibold text-white">QUIENES SOMOS</a>
-          <a href="#" class="font-semibold text-white">CONTACTANOS</a>
+          <a href="#" class="font-semibold text-white">QUIÉNES SOMOS</a>
+          <a href="#" class="font-semibold text-white">CONTÁCTANOS</a>
         </div>
         <div class="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-12">
           <a href="#" class="font-semibold text-white">Iniciar Sesión</a>
@@ -25,118 +26,105 @@
         </div>
       </nav>
 
-      <!-- Hero Content -->
-      <div class="relative container mx-auto px-6 pt-14 lg:px-8">
-        <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
-          <div class="text-center space-y-8">
-            <h1 class="text-6xl font-black tracking-tight text-white sm:text-8xl">
-              REVOLUCIONAMOS<br>EL JUEGO!
+      <!-- Contenido Principal -->
+      <div class="relative container mx-auto px-6 pt-16 lg:px-8">
+        <div class="flex flex-col-reverse lg:flex-row items-center justify-between">
+          <!-- Texto a la izquierda -->
+          <div class="lg:w-2/4 text-center">
+            <h1 class="titulo text-6xl text-[#FF8000] sm:text-7xl" style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);">
+              ¡Revolucionamos el juego!
             </h1>
 
-            <p class="text-2xl font-medium text-white mt-8">
+            <p class="text-3xl font-medium text-white mt-12">
               Haz de tu experiencia algo único
             </p>
 
-            <p class="text-lg text-white max-w-xl mx-auto">
+            <p class="text-xl text-white mt-4">
               Pide tu orden a través del celular, y CiberMesero hará el resto.
             </p>
 
-            <div class="mb-8">
-              <span class="bg-gray-400 text-white px-4 py-2 rounded-lg text-sm font-bold">
-                INNOVADOR REVOLUCIONARIO EXCLUSIVO
+            <div class="mb-8 mt-6">
+              <span class="bg-white/60 px-4 py-1 rounded-lg text-lg text-[#3C3C3C] inline-flex justify-center gap-4">
+                <span>Innovador</span>
+                <span>Revolucionario</span>
+                <span>Exclusivo</span>
               </span>
             </div>
 
-            <div class="mt-12">
-              <a href="#"
-                class="bg-[#E67300] text-white px-12 py-4 rounded-full text-xl font-black uppercase tracking-wide hover:bg-[#FF8000] transition-colors shadow-lg">
-                EXPLORAR MÁS
+            <div>
+              <a href="#" class="bg-[#FF8000] text-white px-5 py-2 rounded-full text-xl tracking-wide shadow-xl">
+                Explorar más
               </a>
             </div>
+          </div>
+
+          <!-- Imagen del robot a la derecha -->
+          <div class="lg:w-1/2 flex justify-center">
+            <img src="@/assets/imagenes/robot.png" alt="CiberMesero" class="scale-110">
           </div>
         </div>
       </div>
     </div>
 
+
     <!-- Sección de Cards con fondo blanco -->
     <div class="bg-white w-full mt-28">
-      <div class="container mx-auto px-6 lg:px-8 -mt-20">
+      <div class="container mx-auto px-6 lg:px-8">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+
           <!-- Card 1 -->
-          <div class="flex flex-col items-center p-8 bg-gray-100 rounded-3xl shadow-lg">
+          <div
+            class="flex flex-col items-center p-8 bg-gradient-to-b from-[#E1E1E1] to-white rounded-3xl shadow-xl transform -translate-y-12">
+            <!-- imagen de bombilla -->
             <div class="mb-4">
-              <!-- Ícono de bombilla -->
-              <svg class="w-12 h-12 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                fill="currentColor">
-                <path
-                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3-8c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3z" />
-              </svg>
+              <img src="@/assets/imagenes/innovacion.png" alt="Innovación">
             </div>
-            <h3 class="text-xl font-semibold text-gray-800 text-center">Innovación</h3>
-            <p class="text-gray-600 text-center">Continua</p>
+            <p class="text-2xl text-[#565656] text-center">Innovación Continua</p>
           </div>
 
           <!-- Card 2 -->
-          <div class="flex flex-col items-center p-8 bg-gray-100 rounded-3xl shadow-lg">
-            <div class="mb-4">
-              <!-- Ícono de rayo -->
-              <div class="w-12 h-12 border-2 border-blue-400 flex items-center justify-center">
-                <svg class="w-8 h-8 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                  fill="currentColor">
-                  <path d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
+          <div class="flex flex-col items-center p-8 bg-gradient-to-b from-[#E1E1E1] to-white rounded-3xl shadow-xl">
+            <!-- imagen de rayo -->
+            <div class="mb-4 w-40">
+              <img src="@/assets/imagenes/eficiencia.png" alt="Eficiencia">
             </div>
-            <h3 class="text-xl font-semibold text-gray-800 text-center">Eficiencia y</h3>
-            <p class="text-gray-600 text-center">Rapidez</p>
+            <p class="text-2xl text-[#565656] text-center">Eficiencia y</p>
+            <p class="text-2xl text-[#565656] text-center">Rapidez</p>
           </div>
 
           <!-- Card 3 -->
-          <div class="flex flex-col items-center p-8 bg-gray-100 rounded-3xl shadow-lg">
-            <div class="mb-4">
-              <!-- Ícono de diana -->
-              <svg class="w-12 h-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10" fill="#FF0000" />
-                <circle cx="12" cy="12" r="7" fill="#FFFFFF" />
-                <circle cx="12" cy="12" r="4" fill="#FF0000" />
-              </svg>
+          <div
+            class="flex flex-col items-center p-8 bg-gradient-to-b from-[#E1E1E1] to-white rounded-3xl shadow-xl transform -translate-y-12">
+            <!-- imagen de diana -->
+            <div class="mb-4 w-40">
+              <img src="@/assets/imagenes/experiencia.png" alt="Experiencia">
             </div>
-            <h3 class="text-xl font-semibold text-gray-800 text-center">Experiencia</h3>
-            <p class="text-gray-600 text-center">Personalizada</p>
+            <p class="text-2xl text-[#565656] text-center">Experiencia Personalizada</p>
           </div>
 
           <!-- Card 4 -->
-          <div class="flex flex-col items-center p-8 bg-gray-100 rounded-3xl shadow-lg">
-            <div class="mb-4">
-              <!-- Ícono de enlace -->
-              <svg class="w-12 h-12 text-gray-800" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                fill="currentColor">
-                <path
-                  d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z" />
-              </svg>
+          <div class="flex flex-col items-center p-8 bg-gradient-to-b from-[#E1E1E1] to-white rounded-3xl shadow-xl">
+            <!-- imagen de enlace -->
+            <div class="mb-8 w-40 mt-6">
+              <img src="@/assets/imagenes/facil.png" alt="Integración">
             </div>
-            <h3 class="text-xl font-semibold text-gray-800 text-center">Fácil</h3>
-            <p class="text-gray-600 text-center">Integración</p>
+            <p class="text-2xl text-[#565656] text-center">Fácil</p>
+            <p class="text-2xl text-[#565656] text-center">Integración</p>
           </div>
         </div>
 
-
         <!-- Sección descripción -->
-        <div class="mx-auto mt-24 max-w-4xl pb-24">
-          <div class="bg-gray-100 rounded-3xl p-12 shadow-lg">
+        <div class="mx-auto mt-24  pb-24">
+          <div class="bg-gradient-to-b from-[#E1E1E1] to-[#F8F8F8] rounded-3xl p-5">
             <div class="flex flex-col items-center">
-              <!-- Ícono de bombilla -->
-              <svg class="w-16 h-16 text-yellow-400 mb-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                fill="currentColor">
-                <path
-                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3-8c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3z" />
-              </svg>
+              <!-- imagen de bombilla -->
+              <img src="@/assets/imagenes/innovacion.png" alt="">
 
-              <h2 class="text-center text-4xl font-black text-gray-900 mb-8">
-                INNOVACIÓN CONTINUA
+              <h2 class="titulo text-center text-4xl mb-8">
+                Innovación continua
               </h2>
 
-              <p class="text-center text-lg leading-8 text-gray-600 max-w-2xl">
+              <p class="text-center text-2xl max-w-5xl mb-10">
                 Nos dedicamos a ofrecer soluciones tecnológicas avanzadas que mejoran la experiencia en los
                 restaurantes, manteniéndonos a la vanguardia de la tecnología para ofrecer lo mejor a nuestros
                 clientes.
@@ -145,34 +133,35 @@
           </div>
         </div>
 
-        <!-- Seccion Quienes somos -->
-        <div class="bg-white py-16 sm:py-24">
+        <!-- Sección Quienes somos -->
+        <div class="relative bg-[#FFCE9D] py-16 sm:py-12 mb-10 rounded-[8rem] rounded-tr-none">
           <div class="mx-auto max-w-7xl px-6 lg:px-8">
-            <!-- Sección "¿Quiénes somos?" -->
             <div class="text-center mb-16">
-              <h2 class="text-4xl font-bold text-[#E67300]">¿Quiénes somos?</h2>
-              <p class="mt-6 text-lg text-gray-700 max-w-2xl mx-auto">
+              <h2 class="titulo text-4xl text-[#FF8000]">¿Quiénes somos?</h2>
+              <p class="mt-4 text-2xl max-w-4xl mx-auto mb-24">
                 Somos una plataforma innovadora que ofrece a los restaurantes la oportunidad de incorporar meseros
                 inteligentes en su servicio. Con nuestra tecnología, los clientes pueden realizar sus pedidos
                 directamente desde su celular, mejorando la experiencia de cada comida.
               </p>
             </div>
 
-            <!-- Card gris -->
-            <div class="bg-gray-100 p-8 rounded-3xl max-w-4xl mx-auto">
-              <div class="grid md:grid-cols-2 gap-8 items-center">
-                <!-- Imagen del teléfono -->
-                <div class="flex justify-center">
-                  <img src="@/assets/imagenes/imagenContact.png" alt="Hand holding phone" class="w-64" />
-                </div>
+            <!-- Sección 'Quiénes somos' -->
+            <div class="relative grid md:grid-cols-2 items-center">
+              <!-- Imagen del teléfono -->
+              <div class="relative flex justify-center transform -translate-x-16 z-10">
+                <img src="@/assets/imagenes/mano.png" alt="Hand holding phone" class="w-[85%] scale-150"/>
+              </div>
 
-                <!-- Contenido de la card -->
-                <div class="space-y-6">
-                  <h3 class="text-2xl font-bold text-[#E67300]">NUESTRA MISIÓN</h3>
-                  <p class="text-gray-700 text-lg">
+              <!-- Sección 'Nuestra misión' -->
+              <div class="relative z-10 transform translate-x-24 justify-center mb-14">
+                <div class="space-y-2 px-12 py-12 bg-[#C2C2C2] rounded-l-3xl shadow-lg mb-6">
+                  <h3 class="titulo text-3xl text-white text-center">NUESTRA MISIÓN</h3>
+                  <p class="text-white text-2xl text-center">
                     Transformar la forma en que los restaurantes interactúan con sus clientes, brindando un servicio más
                     eficiente y moderno.
                   </p>
+                </div>
+                <div class="flex justify-center">
                   <button
                     class="mt-4 bg-[#E67300] text-white px-8 py-3 rounded-full hover:bg-[#FF8000] transition-colors">
                     Contáctanos
@@ -184,5 +173,10 @@
         </div>
       </div>
     </div>
+
+    <!-- Pie de página -->
+    <footer class="bg-[#FF8000] text-center py-1">
+      Copyright © [2025] [Nombre de tu plataforma]
+    </footer>
   </div>
 </template>
