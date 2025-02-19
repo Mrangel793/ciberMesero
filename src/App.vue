@@ -7,8 +7,8 @@
 
 
 <script setup lang="ts">
-import LandingView from './views/Auth/LandingView.vue';
-import LoginView from './views/Auth/LoginView.vue'
-import RegisterView from './views/Auth/RegisterView.vue'
+import LandingView from './modules/home/pages/LandingView.vue';
+import LoginView from './modules/auth/pages/LoginView.vue';
+import RegisterView from './modules/auth/pages/RegisterView.vue';
 import { RouterLink, RouterView } from 'vue-router'
 </script>
