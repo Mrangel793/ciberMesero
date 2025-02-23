@@ -90,15 +90,22 @@ import { signInWithEmailAndPassword, getAuth  } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { ref } from 'vue';
 
+// Define el nombre del componente
+defineOptions({
+    name: 'LoginView'
+});
+
+// Inicializa Firebase Auth y Firestore
 const auth = getAuth();
 const db = getFirestore();
 
-export const userRole = ref(null);
-
+// Variables reactivas
 const email = ref('');
 const password = ref('');
 const errorMessage = ref('');
+const userRole = ref(null);
 
+// Función para iniciar sesión
 const login = async () => {
     errorMessage.value = '';
 
