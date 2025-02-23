@@ -54,10 +54,7 @@
             </div>
 
             <div class="flex items-center justify-center">
-                <button
-                    class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
-                    Registrarse
-                </button>
+                <router-link to="/register" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">Registrarse</router-link>
             </div>
 
             <div class="flex justify-center mt-6 space-x-4">
