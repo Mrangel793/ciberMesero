@@ -37,8 +37,8 @@
           <a href="#" class="font-semibold text-white">CONTÁCTANOS</a>
         </div>
         <div class="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-12">
-          <a href="#" class="font-semibold text-white">Iniciar Sesión</a>
-          <a href="#" class="font-semibold text-white">Registrarse</a>
+          <router-link to="/login" class="font-semibold text-white">Iniciar Sesión</router-link>
+          <router-link to="/register" class="font-semibold text-white">Registrarse</router-link>
         </div>
       </nav>
 

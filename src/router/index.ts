@@ -1,13 +1,24 @@
+import LandingView from '@/modules/home/pages/LandingView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    // {
-    //   path: '/',
-    //   name: 'home',
-    //   component: HomeView,
-    // },
+    {
+      path: '/',
+      name: 'home',
+      component: LandingView,
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/modules/auth/pages/LoginView.vue'),
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: () => import('@/modules/auth/pages/RegisterView.vue'),
+    }
     // {
     //   path: '/about',
     //   name: 'about',

@@ -55,10 +55,7 @@
             </div>
 
             <div class="flex items-center justify-center">
-                <button
-                    class="texto w-full bg-white hover:bg-gray-100 text-[#FD7401] font-semibold py-2 px-4 border border-[#FD7401] rounded shadow">
-                    Registrarse
-                </button>
+                <router-link to="/register" class="texto w-full bg-white hover:bg-gray-100 text-[#FD7401] font-semibold py-2 px-4 border border-[#FD7401] rounded shadow">Registrarse</router-link>
             </div>
 
             <div class="flex justify-center mt-4 space-x-4">
@@ -96,62 +93,69 @@
 
 <script lang="ts" setup>
 import fondo from '@/assets/imagenes/fondo.png';
-// import { signInWithEmailAndPassword, getAuth  } from 'firebase/auth';
-// import { getFirestore, doc, getDoc } from 'firebase/firestore';
-// import { ref } from 'vue';
+import { signInWithEmailAndPassword, getAuth  } from 'firebase/auth';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { ref } from 'vue';
 
-// const auth = getAuth();
-// const db = getFirestore();
+// Define el nombre del componente
+defineOptions({
+    name: 'LoginView'
+});
 
-// export const userRole = ref(null);
+// Inicializa Firebase Auth y Firestore
+const auth = getAuth();
+const db = getFirestore();
 
-// const email = ref('');
-// const password = ref('');
-// const errorMessage = ref('');
+// Variables reactivas
+const email = ref('');
+const password = ref('');
+const errorMessage = ref('');
+const userRole = ref(null);
 
-// const login = async () => {
-//     errorMessage.value = '';
+// Función para iniciar sesión
+const login = async () => {
+    errorMessage.value = '';
 
-//     try {
-//         const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
-//         const user = userCredential.user;
-//         console.log('Usuario autenticado con UID:', user.uid);
-//         console.log('User logged in');
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
+        const user = userCredential.user;
+        console.log('Usuario autenticado con UID:', user.uid);
+        console.log('User logged in');
 
-//         // 1. Obtener el UID del usuario autenticado
-//         const uid = user.uid;
+        // 1. Obtener el UID del usuario autenticado
+        const uid = user.uid;
 
-//         // 2. Consultar Firestore para obtener el documento del usuario
-//         const userDocRef = doc(db, 'users', uid);
-//         const userDocSnap = await getDoc(userDocRef);
+        // 2. Consultar Firestore para obtener el documento del usuario
+        const userDocRef = doc(db, 'users', uid);
+        const userDocSnap = await getDoc(userDocRef);
 
-//         if (userDocSnap.exists()) {
-//             const userData = userDocSnap.data();
-//             const fetchedUserRole = userData.role; // Obtiene el rol del documento
-//             console.log('Rol del usuario obtenido de Firestore:', fetchedUserRole);
+        if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            const fetchedUserRole = userData.role; // Obtiene el rol del documento
+            console.log('Rol del usuario obtenido de Firestore:', fetchedUserRole);
 
-//             // 3. Guardar el rol en la ref 'userRole' (estado local del componente)
-//             userRole.value = fetchedUserRole; // Asigna el rol a la ref 'userRole'
+            // 3. Guardar el rol en la ref 'userRole' (estado local del componente)
+            userRole.value = fetchedUserRole; // Asigna el rol a la ref 'userRole'
 
-//         } else {
-//             console.error('Documento de usuario no encontrado en Firestore para UID:', uid);
-//             errorMessage.value = 'Error al obtener información del usuario.';
-//             userRole.value = null; // Asegúrate de resetear userRole en caso de error
-//             return; // Importante salir de la función si no se encuentra el documento
-//         }
+        } else {
+            console.error('Documento de usuario no encontrado en Firestore para UID:', uid);
+            errorMessage.value = 'Error al obtener información del usuario.';
+            userRole.value = null; // Asegúrate de resetear userRole en caso de error
+            return; // Importante salir de la función si no se encuentra el documento
+        }
 
-//     } catch (error: any) {
-//         console.error('Error al iniciar sesión:', error.code, error.message);
-//         errorMessage.value = error.message;
-//         userRole.value = null; // Asegúrate de resetear userRole en caso de error
-//     }
-//     return {
-//         email,
-//         password,
-//         errorMessage,
-//         login,
-//         userRole
-//     }
-// };
+    } catch (error: any) {
+        console.error('Error al iniciar sesión:', error.code, error.message);
+        errorMessage.value = error.message;
+        userRole.value = null; // Asegúrate de resetear userRole en caso de error
+    }
+    return {
+        email,
+        password,
+        errorMessage,
+        login,
+        userRole
+    }
+};
 
 </script>
