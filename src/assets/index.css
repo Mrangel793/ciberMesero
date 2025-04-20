@@ -12,3 +12,7 @@ html, body, #app {
   .titulo {
     font-family: 'Luckiest Guy', cursive;
   }
+
+  .texto {
+    font-family: 'Libre Bodoni';
+  }

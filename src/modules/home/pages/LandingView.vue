@@ -15,6 +15,22 @@
           </a>
         </div>
 
+        <!-- Botón hamburguesa -->
+        <div class="lg:hidden">
+          <button @click="isMenuOpen = !isMenuOpen" class="text-white focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+
+              <!-- Icono de las tres lineas -->
+              <path v-if="!isMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16" />
+
+              <!-- icono de la X -->
+              <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
         <div class="hidden lg:flex lg:gap-x-12">
           <a href="#" class="font-semibold text-white">INICIO</a>
           <a href="#" class="font-semibold text-white">QUIÉNES SOMOS</a>
@@ -26,11 +42,24 @@
         </div>
       </nav>
 
+      <!-- Menú móvil desplegable -->
+      <div v-if="isMenuOpen"
+        class="lg:hidden absolute top-20 inset-x-0 z-50 bg-[#181818] py-4 px-6 shadow-lg rounded-b-lg transition-all duration-300 ease-in-out">
+        <div class="flex flex-col space-y-4">
+          <a href="#" class="font-semibold text-white py-2 block">INICIO</a>
+          <a href="#" class="font-semibold text-white py-2 block">QUIÉNES SOMOS</a>
+          <a href="#" class="font-semibold text-white py-2 block">CONTÁCTANOS</a>
+          <hr class="border-gray-600">
+          <a href="#" class="font-semibold text-white py-2 block">Iniciar Sesión</a>
+          <a href="#" class="font-semibold text-white py-2 block">Registrarse</a>
+        </div>
+      </div>
+
       <!-- Contenido Principal -->
       <div class="relative container mx-auto px-6 pt-16 lg:px-8">
-        <div class="flex flex-col-reverse lg:flex-row items-center justify-between">
+        <div class="flex flex-col lg:flex-row items-center justify-between">
           <!-- Texto a la izquierda -->
-          <div class="lg:w-2/4 text-center">
+          <div class="w-full lg:w-2/4 text-center mb-8 lg:mb-0">
             <h1 class="titulo text-6xl text-[#FF8000] sm:text-7xl" style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);">
               ¡Revolucionamos el juego!
             </h1>
@@ -59,8 +88,10 @@
           </div>
 
           <!-- Imagen del robot a la derecha -->
-          <div class="lg:w-1/2 flex justify-center">
-            <img src="@/assets/imagenes/robot.png" alt="CiberMesero" class="scale-110">
+          <div class="hidden lg:flex lg:w-1/2 justify-center">
+            <div class="relative h-full">
+              <img src="@/assets/imagenes/robot.png" alt="CiberMesero" class="w-auto scale-110 object-contain">
+            </div>
           </div>
         </div>
       </div>
@@ -145,15 +176,15 @@
               </p>
             </div>
 
-            <!-- Sección 'Quiénes somos' -->
+            <!-- Sección imagen y texto -->
             <div class="relative grid md:grid-cols-2 items-center">
               <!-- Imagen del teléfono -->
               <div class="relative flex justify-center transform -translate-x-16 z-10">
-                <img src="@/assets/imagenes/mano.png" alt="Hand holding phone" class="w-[85%] scale-150"/>
+                <img src="@/assets/imagenes/mano.png" alt="Hand holding phone" class="w-[85%] scale-150" />
               </div>
 
               <!-- Sección 'Nuestra misión' -->
-              <div class="relative z-10 transform translate-x-24 justify-center mb-14">
+              <div class="relative z-10 transform translate-x-20 justify-center mb-14 mt-14 md:mt-0">
                 <div class="space-y-2 px-12 py-12 bg-[#C2C2C2] rounded-l-3xl shadow-lg mb-6">
                   <h3 class="titulo text-3xl text-white text-center">NUESTRA MISIÓN</h3>
                   <p class="text-white text-2xl text-center">
@@ -180,3 +211,8 @@
     </footer>
   </div>
 </template>
+
+<script lang="ts" setup>
+import { ref } from 'vue';
+const isMenuOpen = ref(false);
+</script>
