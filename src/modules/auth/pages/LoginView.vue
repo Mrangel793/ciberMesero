@@ -109,11 +109,11 @@ const login = async () => {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
         const user = userCredential.user;
-        console.log('Usuario autenticado con UID:', user.uid);
         console.log('User logged in');
-
+        
         // 1. Obtener el UID del usuario autenticado
         const uid = user.uid;
+        console.log('Usuario autenticado con UID:', uid);
 
         // 2. Consultar Firestore para obtener el documento del usuario
         const userDocRef = doc(db, 'users', uid);
