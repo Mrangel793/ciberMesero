@@ -61,6 +61,7 @@
         </div>
       </form>
 
+      <!-- Alertas -->
       <div v-if="successMessage" class="mt-4 bg-green-100 text-green-800 px-4 py-2 rounded text-center">
         {{ successMessage }}
       </div>

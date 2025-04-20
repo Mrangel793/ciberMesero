@@ -47,6 +47,14 @@
                 </div>
             </form>
 
+            <!-- Alertas -->
+            <div v-if="successMessage" class="mt-4 bg-green-100 text-green-800 px-4 py-2 rounded text-center">
+                {{ successMessage }}
+            </div>
+            <div v-if="errorMessage" class="mt-4 bg-red-100 text-red-800 px-4 py-2 rounded text-center">
+                {{ errorMessage }}
+            </div>
+
             <!-- Estilos de '---- OR ----' -->
             <div class="flex items-center my-4 mb-8">
                 <div class="flex-grow border-t border-[#C2C2C2]"></div>
@@ -55,7 +63,8 @@
             </div>
 
             <div class="flex items-center justify-center">
-                <router-link to="/register" class="texto w-full bg-white hover:bg-gray-100 text-[#FD7401] font-semibold py-2 px-4 border border-[#FD7401] rounded shadow">Registrarse</router-link>
+                <router-link to="/register"
+                    class="texto w-full bg-white hover:bg-gray-100 text-[#FD7401] font-semibold py-2 px-4 border border-[#FD7401] rounded shadow">Registrarse</router-link>
             </div>
 
             <div class="flex justify-center mt-4 space-x-4">
@@ -93,23 +102,27 @@
 
 <script lang="ts" setup>
 import fondo from '@/assets/imagenes/fondo.png';
-import { signInWithEmailAndPassword, getAuth  } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '@/firebaseConfig';
 import { ref } from 'vue';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { getFirebaseErrorMessage } from '@/utils/firebaseErrors';
+
+
+
 
 // Define el nombre del componente
 defineOptions({
     name: 'LoginView'
 });
 
-// Inicializa Firebase Auth y Firestore
-const auth = getAuth();
-const db = getFirestore();
+
 
 // Variables reactivas
 const email = ref('');
 const password = ref('');
 const errorMessage = ref('');
+const successMessage = ref('');
 const userRole = ref(null);
 
 // Función para iniciar sesión
@@ -120,7 +133,7 @@ const login = async () => {
         const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
         const user = userCredential.user;
         console.log('User logged in');
-        
+
         // 1. Obtener el UID del usuario autenticado
         const uid = user.uid;
         console.log('Usuario autenticado con UID:', uid);
@@ -133,7 +146,7 @@ const login = async () => {
             const userData = userDocSnap.data();
             const fetchedUserRole = userData.role; // Obtiene el rol del documento
             console.log('Rol del usuario obtenido de Firestore:', fetchedUserRole);
-
+            successMessage.value = 'Inicio de sesión exitoso.';
             // 3. Guardar el rol en la ref 'userRole' (estado local del componente)
             userRole.value = fetchedUserRole; // Asigna el rol a la ref 'userRole'
 
@@ -146,7 +159,8 @@ const login = async () => {
 
     } catch (error: any) {
         console.error('Error al iniciar sesión:', error.code, error.message);
-        errorMessage.value = error.message;
+        const firebaseError = error.code || error.message;
+        errorMessage.value = getFirebaseErrorMessage(firebaseError);
         userRole.value = null; // Asegúrate de resetear userRole en caso de error
     }
     return {

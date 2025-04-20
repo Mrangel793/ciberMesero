@@ -16,6 +16,7 @@ export function getFirebaseErrorMessage(errorCode: string): string {
       'auth/user-not-found': 'Usuario no encontrado.',
       'auth/wrong-password': 'Contraseña incorrecta.',
       'auth/user-disabled': 'Esta cuenta ha sido deshabilitada.',
+      'auth/invalid-credential': 'Credenciales inválidas.',
     };
   
     return errorMessages[errorCode] || 'Ocurrió un error inesperado. Intenta nuevamente.';
