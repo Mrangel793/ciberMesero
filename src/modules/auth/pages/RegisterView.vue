@@ -120,6 +120,7 @@ import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import router from '@/router';
 import { getFirebaseErrorMessage } from '@/utils/firebaseErrors';
+import type { UserFirestore } from '../interfaces/UserFirestore';
 
 
 
@@ -128,8 +129,8 @@ const email = ref<string>('');
 const password = ref('');
 const errorMessage = ref('');
 const route = useRoute();
-const role = ref(route.query.role || 'client');
-const plan = ref(route.query.plan || null);
+const role = ref((route.query.role as string) || 'client');
+const plan = ref((route.query.plan as string) || null);
 const successMessage = ref('');
 
 onMounted(() => {
@@ -156,15 +157,15 @@ const register = async () => {
     const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
     const user = userCredential.user;
 
-    const userData: any = {
+    const userData: UserFirestore = {
       uid: user.uid,
       name: name.value,
       email: email.value,
-      role: role.value,
+      role: role.value || 'cliente',
       createdAt: new Date()
     };
 
-    if (role.value === 'restaurant') {
+    if (role.value === 'admin') {
       userData.restaurantInfo = {
         plan: plan.value || 'basico',
         pruebaActiva: true,

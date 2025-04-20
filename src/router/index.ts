@@ -1,6 +1,19 @@
 import LandingView from '@/modules/home/pages/LandingView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
+import {
+  HomeIcon,
+  ClipboardDocumentListIcon,
+  TagIcon,
+  BookOpenIcon,
+  FolderIcon,
+  BuildingStorefrontIcon,
+  ChartBarIcon,
+  UsersIcon,
+  QuestionMarkCircleIcon,
+  Cog6ToothIcon
+} from '@heroicons/vue/24/outline'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -18,6 +31,19 @@ const router = createRouter({
       path: '/register',
       name: 'Register',
       component: () => import('@/modules/auth/pages/RegisterView.vue'),
+    },
+
+    // --- RUTAS PRIVADAS / MENÚ ---
+    {
+      path: '/admin/dashboard',
+      name: 'Dashboard',
+      component: () => import('@/modules/admin/pages/DashboardView.vue'),
+      meta: {
+        showInMenu: true,
+        title: 'AdminDashboard',
+        icon: 'HomeIcon',
+        roles: ['admin'],
+      }
     }
     // {
     //   path: '/about',

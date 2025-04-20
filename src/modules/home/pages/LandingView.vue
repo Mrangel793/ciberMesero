@@ -276,7 +276,7 @@
             </ul>
             <!-- Boton -->
             <div class="px-6 pb-8">
-              <router-link :to="{ name: 'Register', query: { role: 'restaurant', plan: 'basico' } }"
+              <router-link :to="{ name: 'Register', query: { role: 'admin', plan: 'basico' } }"
                 class="block w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition text-center">
                 Seleccionar Plan
               </router-link>
@@ -349,7 +349,7 @@
             </ul>
             <!-- Boton -->
             <div class="px-6 pb-8">
-              <router-link :to="{ name: 'Register', query: {role:'restaurant', plan:'intermedio'}}" class="block w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition text-center">
+              <router-link :to="{ name: 'Register', query: {role:'admin', plan:'intermedio'}}" class="block w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition text-center">
                 Seleccionar Plan
               </router-link>
             </div>
@@ -421,7 +421,7 @@
             </ul>
             <!-- Boton -->
             <div class="px-6 pt-6 pb-8">
-              <router-link :to="{name: 'Register', query:{role:'restaurant', plan:'avanzado'}}" class="block w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition text-center">
+              <router-link :to="{name: 'Register', query:{role:'admin', plan:'avanzado'}}" class="block w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition text-center">
                 Seleccionar Plan
               </router-link>
             </div>

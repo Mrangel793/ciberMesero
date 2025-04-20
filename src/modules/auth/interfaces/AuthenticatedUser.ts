@@ -1,6 +1,7 @@
-export interface User {
+
+export interface AuthenticatedUser {
     name?: string;
     email: string;
-    password: string;
     role?: string;
-}
+  }
+  
