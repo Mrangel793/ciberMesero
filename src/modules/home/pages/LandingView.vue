@@ -37,8 +37,8 @@
           <a href="#" class="font-semibold text-white">CONTÁCTANOS</a>
         </div>
         <div class="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-12">
-          <router-link to="/login" class="font-semibold text-white">Iniciar Sesión</router-link>
-          <router-link to="/register" class="font-semibold text-white">Registrarse</router-link>
+          <router-link to="login" class="font-semibold text-white">Iniciar Sesión</router-link>
+          <router-link to="register" class="font-semibold text-white">Registrarse</router-link>
         </div>
       </nav>
 
@@ -274,10 +274,12 @@
                 <CheckIcon class="w-5 h-5 text-green-500" />
               </li>
             </ul>
+            <!-- Boton -->
             <div class="px-6 pb-8">
-              <button class="w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition">
+              <router-link :to="{ name: 'Register', query: { role: 'restaurant', plan: 'basico' } }"
+                class="block w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition text-center">
                 Seleccionar Plan
-              </button>
+              </router-link>
             </div>
           </div>
 
@@ -345,10 +347,11 @@
                 <CheckIcon class="w-5 h-5 text-green-500" />
               </li>
             </ul>
+            <!-- Boton -->
             <div class="px-6 pb-8">
-              <button class="w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition">
+              <router-link :to="{ name: 'Register', query: {role:'restaurant', plan:'intermedio'}}" class="block w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition text-center">
                 Seleccionar Plan
-              </button>
+              </router-link>
             </div>
           </div>
 
@@ -416,10 +419,11 @@
                 <CheckIcon class="w-5 h-5 text-green-500" />
               </li>
             </ul>
+            <!-- Boton -->
             <div class="px-6 pt-6 pb-8">
-              <button class="w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition">
+              <router-link :to="{name: 'Register', query:{role:'restaurant', plan:'avanzado'}}" class="block w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition text-center">
                 Seleccionar Plan
-              </button>
+              </router-link>
             </div>
           </div>
 
@@ -438,4 +442,6 @@
 import { ref } from 'vue';
 import { CheckIcon, XMarkIcon } from '@heroicons/vue/24/solid'
 const isMenuOpen = ref(false);
+
+
 </script>

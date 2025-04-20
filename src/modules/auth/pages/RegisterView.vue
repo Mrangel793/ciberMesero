@@ -61,6 +61,14 @@
         </div>
       </form>
 
+      <div v-if="successMessage" class="mt-4 bg-green-100 text-green-800 px-4 py-2 rounded text-center">
+        {{ successMessage }}
+      </div>
+      <div v-if="errorMessage" class="mt-4 bg-red-100 text-red-800 px-4 py-2 rounded text-center">
+        {{ errorMessage }}
+      </div>
+
+
       <!-- Estilos de '---- OR ----' -->
       <div class="flex items-center mb-4 mt-8">
         <div class="flex-grow border-t border-[#C2C2C2]"></div>
@@ -103,36 +111,89 @@
 
 <script lang="ts" setup>
 import fondo from '@/assets/imagenes/fondo.png'; // Imagen de fondo
+import { db } from '@/firebaseConfig';
+import { doc, setDoc } from 'firebase/firestore';
 import { auth } from '@/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { ref } from 'vue';
-import type { User } from '@/interfaces/user.interface';
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import router from '@/router';
+import { getFirebaseErrorMessage } from '@/utils/firebaseErrors';
+
+
 
 const name = ref<string>('');
 const email = ref<string>('');
 const password = ref('');
 const errorMessage = ref('');
+const route = useRoute();
+const role = ref(route.query.role || 'client');
+const plan = ref(route.query.plan || null);
+const successMessage = ref('');
+
+onMounted(() => {
+  if (role.value === 'restaurant' && !plan.value) {
+    // Redirigir si intenta entrar sin seleccionar plan
+    router.push({ name: 'Planes' });
+  }
+});
+
 
 
 const register = async () => {
   errorMessage.value = '';
-
+  successMessage.value = '';
+  if (!name.value || !email.value || !password.value) {
+    errorMessage.value = 'Por favor, completa todos los campos.';
+    return;
+  }
+  if (password.value.length < 6) {
+    errorMessage.value = 'La contraseña debe tener al menos 6 caracteres.';
+    return;
+  }
   try {
-    await createUserWithEmailAndPassword(auth, email.value, password.value);
-    console.log('User registered');
+    const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
+    const user = userCredential.user;
+
+    const userData: any = {
+      uid: user.uid,
+      name: name.value,
+      email: email.value,
+      role: role.value,
+      createdAt: new Date()
+    };
+
+    if (role.value === 'restaurant') {
+      userData.restaurantInfo = {
+        plan: plan.value || 'basico',
+        pruebaActiva: true,
+        estadoPlan: 'activo',
+        fechaInicio: new Date()
+      };
+    } else {
+      userData.clientInfo = {
+        preferencias: [],
+        favoritos: []
+      };
+    }
+
+    await setDoc(doc(db, 'users', user.uid), userData);
+    successMessage.value = '¡Registro exitoso!';
+    console.log('Usuario registrado y guardado con rol:', role.value);
+    name.value = '';
+    email.value = '';
+    password.value = '';
   } catch (error: any) {
-    console.log(error.response.data.message);
-    errorMessage.value = error.response.data.message;
+    const firebaseError = error.code || error.message;
+    errorMessage.value = getFirebaseErrorMessage(firebaseError);
   }
 
-  return {
-    name,
-    email,
-    password,
-    errorMessage,
-    register
-  }
-}
+
+
+
+};
+
+
 
 
 
