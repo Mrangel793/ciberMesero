@@ -1,6 +1,7 @@
 <template>
   <Sidebar>
-    <div class="p-6 bg-gray-50 min-h-screen space-y-8">
+    <div class="w-full h-full bg-[#F9EBD9] space-y-8">
+
       <!-- HEADER -->
       <div class="flex justify-between items-center">
         <h1 class="text-2xl font-bold text-orange-600">
