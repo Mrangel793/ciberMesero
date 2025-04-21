@@ -3,7 +3,7 @@
     :style="{ backgroundImage: `url(${fondo})` }">
     <div class="bg-white p-8 rounded-xl shadow-lg shadow-[#E78D1B63] w-full max-w-md">
       <h1 class="texto text-3xl font-bold text-center mb-6">REGISTRO</h1>
-      <form @submit.prevent="register">
+      <form @submit.prevent="handleSubmit">
         <!-- Nombre -->
         <div class="mb-4">
           <label for="name" class="texto block text-md font-bold mb-2">Nombre completo</label>
@@ -110,95 +110,26 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import fondo from '@/assets/imagenes/fondo.png'; // Imagen de fondo
-import { db } from '@/firebaseConfig';
-import { doc, setDoc } from 'firebase/firestore';
-import { auth } from '@/firebaseConfig';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { useRouter } from 'vue-router';
-import { getFirebaseErrorMessage } from '@/utils/firebaseErrors';
-import type { UserFirestore } from '../interfaces/UserFirestore';
-import { sendEmailVerification } from 'firebase/auth';
+import { useRegister } from '@/modules/auth/composables/useRegister';
 
-
-
-const name = ref<string>('');
-const email = ref<string>('');
-const password = ref('');
-const errorMessage = ref('');
 const route = useRoute();
-const role = ref((route.query.role as string) || 'client');
-const plan = ref((route.query.plan as string) || null);
-const successMessage = ref('');
-const router = useRouter();
 
-onMounted(() => {
-  if (role.value === 'restaurant' && !plan.value) {
-    // Redirigir si intenta entrar sin seleccionar plan
-    router.push({ name: 'Planes' });
-  }
-});
+// Campos del formulario
+const name = ref('');
+const email = ref('');
+const password = ref('');
+const role = ref((route.query.role as string) || 'cliente'); // o capturado por query param
+const plan = ref('basico');
 
+// Registro
+const { register, errorMessage, successMessage } = useRegister();
 
-
-const register = async () => {
-  errorMessage.value = '';
-  successMessage.value = '';
-  if (!name.value || !email.value || !password.value) {
-    errorMessage.value = 'Por favor, completa todos los campos.';
-    return;
-  }
-  if (password.value.length < 6) {
-    errorMessage.value = 'La contraseña debe tener al menos 6 caracteres.';
-    return;
-  }
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
-    const user = userCredential.user;
-
-    // Verificar el correo electrónico
-    await sendEmailVerification(user);
-
-    const userData: UserFirestore = {
-      uid: user.uid,
-      name: name.value,
-      email: email.value,
-      role: role.value || 'cliente',
-      createdAt: new Date()
-    };
-
-    if (role.value === 'admin') {
-      userData.restaurantInfo = {
-        plan: plan.value || 'basico',
-        pruebaActiva: true,
-        estadoPlan: 'activo',
-        fechaInicio: new Date()
-      };
-    } else {
-      userData.clientInfo = {
-        preferencias: [],
-        favoritos: []
-      };
-    }
-
-    await setDoc(doc(db, 'users', user.uid), userData);
-    successMessage.value = '¡Registro exitoso! Por favor, revisa tu correo y verifica tu cuenta.';
-    console.log('Usuario registrado y guardado con rol:', role.value);
-
-    name.value = '';
-    email.value = '';
-    password.value = '';
-
-    // Redirigir después de 2 segundos (puedes cambiarlo)
-    setTimeout(() => {
-      router.push({ name: 'Login' }); // Usa el nombre de la ruta a tu vista de login
-    }, 2000);
-  } catch (error: any) {
-    const firebaseError = error.code || error.message;
-    errorMessage.value = getFirebaseErrorMessage(firebaseError);
-  }
+const handleSubmit = () => {
+  register(name.value, email.value, password.value, role.value, plan.value);
 };
 </script>
+

@@ -16,7 +16,7 @@
  */
 
 import { defineStore } from 'pinia';
-import type { AuthenticatedUser } from '@/modules/auth/interfaces/AuthenticatedUser';
+import type { AuthenticatedUser } from '@/core/interfaces/AuthenticatedUser';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({

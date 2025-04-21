@@ -5,7 +5,7 @@
 
 <script lang="ts" setup>
 import { signOut } from 'firebase/auth';
-import { auth } from '../../../firebaseConfig';
+import { auth } from '../../../data/firebase/firebaseConfig';
 
 const logout = async () => {
     try{

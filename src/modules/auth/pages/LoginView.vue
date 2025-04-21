@@ -3,7 +3,7 @@
         :style="{ backgroundImage: `url(${fondo})` }">
         <div class="bg-white p-8 rounded-xl shadow-lg shadow-[#E78D1B63] w-full max-w-md m-auto">
             <h1 class="text-2xl font-semibold text-center mb-6 texto">INICIAR SESIÓN</h1>
-            <form @submit.prevent="login">
+            <form @submit.prevent="handleLogin">
                 <div class="mb-4">
                     <label for="email" class="block text-md font-bold mb-2 texto">Correo electrónico</label>
                     <div class="relative">
@@ -100,16 +100,31 @@
     </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import fondo from '@/assets/imagenes/fondo.png';
-import { auth, db } from '@/firebaseConfig';
+import { ref } from 'vue';
+import { useLogin } from '@/modules/auth/composables/useLogin';
+
+const email = ref('');
+const password = ref('');
+
+const { login, errorMessage, successMessage } = useLogin();
+
+const handleLogin = () => {
+  login(email.value, password.value);
+};
+</script>
+
+<!-- <script lang="ts" setup>
+import fondo from '@/assets/imagenes/fondo.png';
+import { auth, db } from '@/data/firebase/firebaseConfig';
 import { ref } from 'vue';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { getFirebaseErrorMessage } from '@/utils/firebaseErrors';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import type { AuthenticatedUser } from '../interfaces/AuthenticatedUser';
+import type { AuthenticatedUser } from '../../../core/interfaces/AuthenticatedUser';
 
 
 
@@ -190,4 +205,4 @@ const login = async () => {
     }
 };
 
-</script>
+</script> -->
