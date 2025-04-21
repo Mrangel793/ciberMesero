@@ -118,7 +118,7 @@ import { auth } from '@/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import router from '@/router';
+import { useRouter } from 'vue-router';
 import { getFirebaseErrorMessage } from '@/utils/firebaseErrors';
 import type { UserFirestore } from '../interfaces/UserFirestore';
 import { sendEmailVerification } from 'firebase/auth';
@@ -133,6 +133,7 @@ const route = useRoute();
 const role = ref((route.query.role as string) || 'client');
 const plan = ref((route.query.plan as string) || null);
 const successMessage = ref('');
+const router = useRouter();
 
 onMounted(() => {
   if (role.value === 'restaurant' && !plan.value) {
@@ -158,10 +159,8 @@ const register = async () => {
     const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
     const user = userCredential.user;
 
-
+    // Verificar el correo electrónico
     await sendEmailVerification(user);
-    
-
 
     const userData: UserFirestore = {
       uid: user.uid,
@@ -188,9 +187,15 @@ const register = async () => {
     await setDoc(doc(db, 'users', user.uid), userData);
     successMessage.value = '¡Registro exitoso! Por favor, revisa tu correo y verifica tu cuenta.';
     console.log('Usuario registrado y guardado con rol:', role.value);
+
     name.value = '';
     email.value = '';
     password.value = '';
+
+    // Redirigir después de 2 segundos (puedes cambiarlo)
+    setTimeout(() => {
+      router.push({ name: 'Login' }); // Usa el nombre de la ruta a tu vista de login
+    }, 2000);
   } catch (error: any) {
     const firebaseError = error.code || error.message;
     errorMessage.value = getFirebaseErrorMessage(firebaseError);
