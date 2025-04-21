@@ -121,6 +121,7 @@ import { useRoute } from 'vue-router';
 import router from '@/router';
 import { getFirebaseErrorMessage } from '@/utils/firebaseErrors';
 import type { UserFirestore } from '../interfaces/UserFirestore';
+import { sendEmailVerification } from 'firebase/auth';
 
 
 
@@ -157,6 +158,11 @@ const register = async () => {
     const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
     const user = userCredential.user;
 
+
+    await sendEmailVerification(user);
+    
+
+
     const userData: UserFirestore = {
       uid: user.uid,
       name: name.value,
@@ -180,7 +186,7 @@ const register = async () => {
     }
 
     await setDoc(doc(db, 'users', user.uid), userData);
-    successMessage.value = '¡Registro exitoso!';
+    successMessage.value = '¡Registro exitoso! Por favor, revisa tu correo y verifica tu cuenta.';
     console.log('Usuario registrado y guardado con rol:', role.value);
     name.value = '';
     email.value = '';

@@ -136,6 +136,12 @@ const login = async () => {
         const userDocRef = doc(db, 'users', uid);
         const userDocSnap = await getDoc(userDocRef);
 
+        if (!user.emailVerified) {
+            errorMessage.value = 'Tu correo no está verificado. Revisa tu bandeja de entrada.';
+            return;
+        }
+
+
         if (userDocSnap.exists()) {
             const userData = userDocSnap.data();
 
