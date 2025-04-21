@@ -200,14 +200,5 @@ const register = async () => {
     const firebaseError = error.code || error.message;
     errorMessage.value = getFirebaseErrorMessage(firebaseError);
   }
-
-
-
-
 };
-
-
-
-
-
 </script>

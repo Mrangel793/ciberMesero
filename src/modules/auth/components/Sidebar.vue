@@ -23,7 +23,7 @@
           </button>
         </div>
   
-        <!-- White nav container -->
+        <!-- Nav container -->
         <div class="flex-1 mx-2 mt-4 bg-white rounded-2xl overflow-hidden flex flex-col">
           <nav class="flex-1 overflow-auto">
             <ul class="p-2 space-y-1">
@@ -87,7 +87,6 @@
   import { useRouter } from 'vue-router'
   import { useAuthStore } from '@/stores/auth'
   import { adminMenu } from '@/modules/admin/menu/adminMenu'
-  // Heroicon para logout:
   import { ArrowLeftOnRectangleIcon } from '@heroicons/vue/24/solid'
   
   const isCollapsed = ref(false)
