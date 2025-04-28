@@ -105,16 +105,24 @@
                     </div>
                 </div>
             </div>
+            <!-- Modal de crear plato-->
+            <NuevoPlatilloModal :visible="showNewDishModal" @close="showNewDishModal = false"
+                @create="handleCreateDish" />
+
+            <!-- Modal de Importación -->
+            <ImportMenuModal :visible="showImportModal" @close="showImportModal = false" @import="handleImport" />
         </div>
     </Sidebar>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import Sidebar from '@/modules/auth/components/Sidebar.vue'
-import { useAuthStore } from '@/stores/auth'
+import { ref, computed } from 'vue';
+import Sidebar from '@/modules/auth/components/Sidebar.vue';
+import { useAuthStore } from '@/stores/auth';
 //   import { SearchIcon } from '@heroicons/vue/24/outline'
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
+import NuevoPlatilloModal from '../components/menu/NuevoPlatilloModal.vue';
+import ImportMenuModal from '../components/menu/ImportMenuModal.vue';
 
 // Usuario
 const auth = useAuthStore()
@@ -122,11 +130,14 @@ const restaurantName = 'Los fugitivos'   // Podrías tomarlo de la ruta o store
 //   const user = { avatar: auth.user?.avatar }
 
 // Filtros
-const searchQuery = ref('')
-const selectedRestaurant = ref('')
-const selectedCategory = ref('')
-const restaurants = ref(['Los fugitivos', 'McDonalds', 'Burger King'])
-const categories = ref(['Entradas', 'Hamburguesas', 'Bebidas'])
+const searchQuery = ref('');
+const selectedRestaurant = ref('');
+const selectedCategory = ref('');
+const restaurants = ref(['Los fugitivos', 'McDonalds', 'Burger King']);
+const categories = ref(['Entradas', 'Hamburguesas', 'Bebidas']);
+const showNewDishModal = ref(false);
+const showImportModal = ref(false)
+
 
 // Ejemplo de datos de menú (luego vendrán de tu API)
 const menuItems = ref([
@@ -160,12 +171,22 @@ const filteredMenuItems = computed(() =>
 
 const router = useRouter()
 function importMenu() {
-    router.push('/menu/importar')
+    showImportModal.value = true;
 }
 function addItem() {
-    router.push('/menu/nuevo')
+    showNewDishModal.value = true
 }
 function editItem(id: number) {
     router.push(`/menu/${id}/editar`)
+}
+
+function handleCreateDish(payload: any) {
+    console.log('Crear platillo', payload)
+    // aquí llamas a tu API y actualizas tu lista de platillos
+}
+
+function handleImport(file: File) {
+    // Aquí tu lógica de import: leer CSV/JSON y enviar a la API
+    console.log('Importando archivo:', file)
 }
 </script>

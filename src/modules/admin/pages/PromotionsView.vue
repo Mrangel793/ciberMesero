@@ -79,7 +79,7 @@
 import { ref, computed } from 'vue'
 import Sidebar from '@/modules/auth/components/Sidebar.vue'
 import { useAuthStore } from '@/stores/auth'
-import NuevaPromocionModal from '../components/NuevaPromocionModal.vue'
+import NuevaPromocionModal from '../components/promotions/NuevaPromocionModal.vue'
 import {
     // SearchIcon,
     BellIcon,
