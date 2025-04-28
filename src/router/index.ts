@@ -55,6 +55,17 @@ const router = createRouter({
         icon: 'HomeIcon',
         roles: ['admin'],
       }
+    },
+    {
+      path: '/admin/promotions',
+      name: 'Promociones',
+      component: () => import('@/modules/admin/pages/PromotionsView.vue'),
+      meta: {
+        showInMenu: true,
+        title: 'Pedidos',
+        icon: 'HomeIcon',
+        roles: ['admin'],
+      }
     }
     // {
     //   path: '/about',
