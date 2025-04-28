@@ -33,6 +33,12 @@ import {
       roles: ['admin']
     },
     {
+      path: '/admin/menu',
+      title: 'Menu',
+      icon: InboxIcon,
+      roles: ['admin']
+    },
+    {
       path: '/admin/usuarios',
       title: 'Usuarios',
       icon: UsersIcon,
