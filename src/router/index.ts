@@ -62,7 +62,18 @@ const router = createRouter({
       component: () => import('@/modules/admin/pages/PromotionsView.vue'),
       meta: {
         showInMenu: true,
-        title: 'Pedidos',
+        title: 'Promociones',
+        icon: 'HomeIcon',
+        roles: ['admin'],
+      }
+    },
+    {
+      path: '/admin/menu',
+      name: 'Menu',
+      component: () => import('@/modules/admin/pages/MenuView.vue'),
+      meta: {
+        showInMenu: true,
+        title: 'Menu',
         icon: 'HomeIcon',
         roles: ['admin'],
       }
