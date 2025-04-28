@@ -39,6 +39,12 @@ import {
       roles: ['admin']
     },
     {
+      path: '/admin/categories',
+      title: 'Categorías',
+      icon: InboxIcon,
+      roles: ['admin']
+    },
+    {
       path: '/admin/usuarios',
       title: 'Usuarios',
       icon: UsersIcon,

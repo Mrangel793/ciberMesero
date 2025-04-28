@@ -77,6 +77,17 @@ const router = createRouter({
         icon: 'HomeIcon',
         roles: ['admin'],
       }
+    },
+    {
+      path: '/admin/categories',
+      name: 'Categorías',
+      component: () => import('@/modules/admin/pages/CategoriesView.vue'),
+      meta: {
+        showInMenu: true,
+        title: 'Menu',
+        icon: 'HomeIcon',
+        roles: ['admin'],
+      }
     }
     // {
     //   path: '/about',
