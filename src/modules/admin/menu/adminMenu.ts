@@ -21,7 +21,7 @@ import {
       roles: ['admin', 'superadmin']
     },
     {
-      path: '/admin/pedidos',
+      path: '/admin/orders',
       title: 'Pedidos',
       icon: InboxIcon,
       roles: ['admin']

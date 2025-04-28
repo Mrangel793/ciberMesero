@@ -44,6 +44,17 @@ const router = createRouter({
         icon: 'HomeIcon',
         roles: ['admin'],
       }
+    },
+    {
+      path: '/admin/orders',
+      name: 'Pedidos',
+      component: () => import('@/modules/admin/pages/OrdersView.vue'),
+      meta: {
+        showInMenu: true,
+        title: 'Pedidos',
+        icon: 'HomeIcon',
+        roles: ['admin'],
+      }
     }
     // {
     //   path: '/about',
