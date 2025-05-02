@@ -64,7 +64,7 @@ const selectedFile = ref<File | null>(null)
 const fileName = ref('')
 const successMessage = ref('')
 const errorMessage = ref('')
-const { importarYGuardar } = useImportarPlatos()
+const { importar } = useImportarPlatos()
 const auth = useAuthStore()
 
 
@@ -77,15 +77,14 @@ function onFileSelected(e: Event) {
 }
 
 async function onImport() {
-  console.log('✅ Se hizo clic en Importar');
   console.log(auth.user?.uid);
   if (!selectedFile.value || !auth.user?.uid) return
 
-  const platos = await importarYGuardar(selectedFile.value, auth.user.uid)
+  const platos = await importar(selectedFile.value)
 
   if (platos.length > 0) {
     successMessage.value = '¡Menú importado correctamente!'
-    emit('import', selectedFile.value) // opcional: para actualizar la vista principal
+    emit('import', selectedFile.value)
   } else {
     errorMessage.value = 'No se importaron datos. Revisa el archivo.'
   }

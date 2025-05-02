@@ -1,15 +1,14 @@
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { FirebaseUserRepository } from '@/data/repositories/FirebaseUserRepository';
-import type { User } from '@/core/interfaces/User';
-
-
-const userRepo = new FirebaseUserRepository();
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import type { User } from '@/core/interfaces/User'
+import { FirebaseUserRepository } from '@/data/repositories/FirebaseUserRepository'
+import { RegisterUseCase } from '@/core/usecases/RegisterUseCase'
+const registerUseCase = new RegisterUseCase(new FirebaseUserRepository())
 
 export const useRegister = () => {
-  const errorMessage = ref('');
-  const successMessage = ref('');
-  const router = useRouter();
+  const errorMessage = ref('')
+  const successMessage = ref('')
+  const router = useRouter()
 
   const register = async (
     name: string,
@@ -18,58 +17,56 @@ export const useRegister = () => {
     role: string,
     plan?: string
   ) => {
-    errorMessage.value = '';
-    successMessage.value = '';
+    errorMessage.value = ''
+    successMessage.value = ''
 
-    // Validación
     if (!name || !email || !password) {
-      errorMessage.value = 'Por favor, completa todos los campos.';
-      return;
+      errorMessage.value = 'Por favor, completa todos los campos.'
+      return
     }
 
     if (password.length < 6) {
-      errorMessage.value = 'La contraseña debe tener al menos 6 caracteres.';
-      return;
+      errorMessage.value = 'La contraseña debe tener al menos 6 caracteres.'
+      return
+    }
+
+    const userData: Omit<User, 'uid' | 'createdAt'> = {
+      name,
+      email,
+      role,
+      restaurantInfo: role === 'admin'
+        ? {
+            plan: plan || 'basico',
+            pruebaActiva: true,
+            estadoPlan: 'activo',
+            fechaInicio: new Date()
+          }
+        : undefined,
+      clientInfo: role !== 'admin'
+        ? {
+            preferencias: [],
+            favoritos: []
+          }
+        : undefined
     }
 
     try {
-      const userData: Omit<User, 'uid' | 'createdAt'> = {
-        name,
-        email,
-        role,
-        restaurantInfo: role === 'admin'
-          ? {
-              plan: plan || 'basico',
-              pruebaActiva: true,
-              estadoPlan: 'activo',
-              fechaInicio: new Date()
-            }
-          : undefined,
-        clientInfo: role !== 'admin'
-          ? {
-              preferencias: [],
-              favoritos: []
-            }
-          : undefined
-      };
+      await registerUseCase.execute(userData, password)
 
-      await userRepo.register(userData, password);
+      successMessage.value = '¡Registro exitoso! Revisa tu correo y luego inicia sesión.'
 
-      successMessage.value = '¡Registro exitoso! Revisa tu correo y luego inicia sesión.';
-
-      // Redirigir después de 2 segundos
       setTimeout(() => {
-        router.push({ name: 'Login' });
-      }, 2000);
+        router.push({ name: 'Login' })
+      }, 2000)
 
     } catch (error: any) {
-      errorMessage.value = 'Error al registrar: ' + error.message;
+      errorMessage.value = 'Error al registrar: ' + error.message
     }
-  };
+  }
 
   return {
     register,
     errorMessage,
     successMessage
-  };
-};
+  }
+}

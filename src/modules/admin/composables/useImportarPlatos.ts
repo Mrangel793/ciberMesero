@@ -1,32 +1,38 @@
-import { ExcelPlatoRepository } from '@/data/repositories/ExcelPlatoRepository';
-import { FirebaseMenuRepository } from '@/data/repositories/FirebaseMenuRepository';
-import { ref } from 'vue';
-import type { MenuItem } from '@/core/interfaces/MenuItem';
+import { ref } from 'vue'
+import { ImportarPlatosUseCase } from '@/core/usecases/ImportarPlatosUseCase'
+import { ExcelPlatoRepository } from '@/data/repositories/ExcelPlatoRepository'
+import { FirebaseMenuRepository } from '@/data/repositories/FirebaseMenuRepository'
+import { useAuthStore } from '@/stores/auth'
+import type { MenuItem } from '@/core/interfaces/MenuItem'
 
-const excelRepo = new ExcelPlatoRepository();
-const firebaseRepo = new FirebaseMenuRepository();
+const useCase = new ImportarPlatosUseCase(
+  new ExcelPlatoRepository(),
+  new FirebaseMenuRepository()
+)
 
-export const useImportarPlatos = () => {
-  const error = ref('');
-  const success = ref('');
+export function useImportarPlatos() {
+  const auth = useAuthStore()
+  const error = ref('')
+  const success = ref('')
 
-  const importarYGuardar = async (file: File, uidRestaurante: string) => {
+  const importar = async (file: File): Promise<MenuItem[]> => {
+    const uid = auth.user?.uid
+    if (!uid) throw new Error('Usuario no autenticado')
+
     try {
-      error.value = '';
-      const platos: MenuItem[] = await excelRepo.importarDesdeExcel(file);
-      await firebaseRepo.guardarMenu(uidRestaurante, platos);
-      success.value = '¡Menú importado correctamente!';
-      return platos;
+      error.value = ''
+      const data = await useCase.execute(file, uid)
+      success.value = '¡Menú importado correctamente!'
+      return data
     } catch (e) {
-      error.value = 'Hubo un error al importar el archivo';
-      console.error(e);
-      return [];
+      error.value = 'Error al importar el archivo'
+      return []
     }
-  };
+  }
 
   return {
-    importarYGuardar,
+    importar,
     error,
     success
-  };
-};
+  }
+}

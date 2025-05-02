@@ -1,6 +1,6 @@
 import type { MenuItem } from "@/core/interfaces/MenuItem";
 import type { RawMenuItem } from "@/core/interfaces/RawMenuItem";
-import type { PlatoRepository } from "@/core/usecases/PlatoRepository";
+import type { PlatoRepository } from "@/data/repositories/PlatoRepository";
 import * as XLSX from 'xlsx';
 
 

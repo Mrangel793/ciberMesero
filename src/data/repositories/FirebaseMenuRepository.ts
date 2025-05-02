@@ -19,4 +19,13 @@ export class FirebaseMenuRepository {
     await Promise.all(batchPromises);
   }
 
+  async guardarPlato(uidRestaurante: string, plato: MenuItem): Promise<void> {
+    const docRef = doc(collection(db, 'users', uidRestaurante, 'menu'), String(plato.id))
+    await setDoc(docRef, {
+      ...plato,
+      oldPrice: plato.oldPrice ?? null,
+      image: plato.image ?? ''
+    })
+  }
+
 }
