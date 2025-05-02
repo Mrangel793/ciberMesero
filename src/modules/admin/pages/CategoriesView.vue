@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import Sidebar from '@/modules/auth/components/Sidebar.vue'
-import { useAuthStore } from '@/stores/auth'
+
 import {
     // SearchIcon,
     BellIcon,
@@ -64,11 +64,7 @@ import NuevaCategoriaModal from '../components/categories/NuevaCategoriaModal.vu
 
 const showNewCat = ref(false)
 
-// Usuario y avatar
-const auth = useAuthStore()
-const user = {
-    // avatar: auth.user?.avatar || 'https://i.pravatar.cc/40'
-}
+
 
 // Control de búsqueda
 const searchQuery = ref('')

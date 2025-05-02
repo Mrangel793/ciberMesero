@@ -23,6 +23,7 @@ export class FirebaseAuthRepository implements AuthRepository {
     const data = userDoc.data();
 
     return {
+      uid: data.uid,
       name: data.name,
       email: data.email,
       role: data.role
