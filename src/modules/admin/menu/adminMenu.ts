@@ -1,6 +1,5 @@
 import {
     HomeIcon,
-    InboxIcon,
     UsersIcon,
     Cog6ToothIcon,
     ChartBarIcon,
