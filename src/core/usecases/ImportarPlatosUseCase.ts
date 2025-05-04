@@ -1,6 +1,6 @@
-import type { PlatoExcelImporter } from '@/data/repositories/PlatoExcelImporter'
-import type { PlatoRepository } from '@/data/repositories/PlatoRepository'
-import type { MenuItem } from '@/core/interfaces/MenuItem'
+import type { PlatoExcelImporter } from '@/core/repositories/PlatoExcelImporter';
+import type { PlatoRepository } from '../repositories/PlatoRepository';
+import type { MenuItem } from '@/core/interfaces/MenuItem';
 
 export class ImportarPlatosUseCase {
   constructor(

@@ -1,11 +1,11 @@
 import type { MenuItem } from "@/core/interfaces/MenuItem";
 import type { RawMenuItem } from "@/core/interfaces/RawMenuItem";
-import type { PlatoRepository } from "@/data/repositories/PlatoRepository";
 import * as XLSX from 'xlsx';
+import type { PlatoExcelImporter } from "./PlatoExcelImporter";
 
 
 
-export class ExcelPlatoRepository implements PlatoRepository {
+export class ExcelPlatoRepository implements PlatoExcelImporter {
 
   async importarDesdeExcel(file: File): Promise<MenuItem[]> {
     const data = await file.arrayBuffer();

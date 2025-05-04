@@ -1,5 +1,5 @@
 import type { User } from '@/core/interfaces/User'
-import type { UserRepository } from '@/data/repositories/UserRepository'
+import type { UserRepository } from '@/core/repositories/UserRepository'
 
 export class RegisterUseCase {
   constructor(private readonly repository: UserRepository) {}

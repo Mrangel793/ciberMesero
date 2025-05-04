@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { ImportarPlatosUseCase } from '@/core/usecases/ImportarPlatosUseCase'
-import { ExcelPlatoRepository } from '@/data/repositories/ExcelPlatoRepository'
+import { ExcelPlatoRepository } from '@/core/repositories/ExcelPlatoRepository'
 import { FirebaseMenuRepository } from '@/data/repositories/FirebaseMenuRepository'
 import { useAuthStore } from '@/stores/auth'
 import type { MenuItem } from '@/core/interfaces/MenuItem'

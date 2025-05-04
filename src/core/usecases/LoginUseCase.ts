@@ -1,5 +1,5 @@
 import type { AuthenticatedUser } from '@/core/interfaces/AuthenticatedUser'
-import type { AuthRepository } from '@/data/repositories/AuthRepository'
+import type { AuthRepository } from '@/core/repositories/AuthRepository'
 
 export class LoginUseCase {
   constructor(private readonly authRepo: AuthRepository) {}

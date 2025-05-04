@@ -1,5 +1,5 @@
 
-import type { AuthRepository } from '@/data/repositories/AuthRepository';
+import type { AuthRepository } from '@/core/repositories/AuthRepository';
 import type { AuthenticatedUser } from '@/core/interfaces/AuthenticatedUser';
 import { auth, db } from '@/data/firebase/firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
