@@ -5,6 +5,7 @@ import { FirebaseMenuRepository } from '@/data/repositories/FirebaseMenuReposito
 import { useAuthStore } from '@/stores/auth'
 import type { MenuItem } from '@/core/interfaces/MenuItem'
 
+
 const useCase = new ImportarPlatosUseCase(
   new ExcelPlatoRepository(),
   new FirebaseMenuRepository()
