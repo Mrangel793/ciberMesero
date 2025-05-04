@@ -1,6 +1,6 @@
 export interface MenuItem {
     /** Identificador */
-    id: number | string
+    id: string
     /** Nombre del platillo */
     name: string
     /** URL o path a la imagen */

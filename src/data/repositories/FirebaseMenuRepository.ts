@@ -1,5 +1,5 @@
 import { db } from '@/data/firebase/firebaseConfig';
-import { doc, setDoc, collection } from 'firebase/firestore';
+import { doc, setDoc, collection, getDocs } from 'firebase/firestore';
 import type { MenuItem } from '@/core/interfaces/MenuItem';
 
 export class FirebaseMenuRepository {
@@ -26,6 +26,11 @@ export class FirebaseMenuRepository {
       oldPrice: plato.oldPrice ?? null,
       image: plato.image ?? ''
     })
+  }
+
+  async obtenerMenu(uidRestaurante: string): Promise<MenuItem[]> {
+    const snapshot = await getDocs(collection(db,`users/${uidRestaurante}/menu` ));
+    return snapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as MenuItem));
   }
 
 }
