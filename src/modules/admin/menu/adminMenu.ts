@@ -3,16 +3,20 @@ import {
     InboxIcon,
     UsersIcon,
     Cog6ToothIcon,
-    ChartBarIcon
+    ChartBarIcon,
+    DocumentTextIcon,
+    CurrencyDollarIcon,
+    CheckCircleIcon,
+    TagIcon
   } from '@heroicons/vue/24/solid';
-  
+
   export interface SidebarItem {
     path: string;
     title: string;
     icon: any; // Puedes tipar mejor si quieres con `Component`
     roles: string[];
   }
-  
+
   export const adminMenu: SidebarItem[] = [
     {
       path: '/admin/dashboard',
@@ -23,25 +27,25 @@ import {
     {
       path: '/admin/orders',
       title: 'Pedidos',
-      icon: InboxIcon,
+      icon: CheckCircleIcon,
       roles: ['admin']
     },
     {
       path: '/admin/promotions',
       title: 'Promociones',
-      icon: InboxIcon,
+      icon: CurrencyDollarIcon,
       roles: ['admin']
     },
     {
       path: '/admin/menu',
       title: 'Menu',
-      icon: InboxIcon,
+      icon: DocumentTextIcon,
       roles: ['admin']
     },
     {
       path: '/admin/categories',
       title: 'Categorías',
-      icon: InboxIcon,
+      icon: TagIcon,
       roles: ['admin']
     },
     {
@@ -63,4 +67,3 @@ import {
       roles: ['admin']
     }
   ];
-  
