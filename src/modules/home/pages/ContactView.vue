@@ -32,13 +32,13 @@
             </div>
 
             <div class="hidden lg:flex lg:gap-x-12">
-                <a href="#" class="font-semibold text-white">INICIO</a>
+                <router-link to="/" class="font-semibold text-white">INICIO</router-link>
                 <a href="#" class="font-semibold text-white">QUIÉNES SOMOS</a>
-                <a href="#" class="font-semibold text-white">CONTÁCTANOS</a>
+                <router-link to="/contact" class="font-semibold text-white">CONTÁCTANOS</router-link>
             </div>
             <div class="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-12">
-                <a href="#" class="font-semibold text-white">Iniciar Sesión</a>
-                <a href="#" class="font-semibold text-white">Registrarse</a>
+                <router-link to="/login" class="font-semibold text-white">Iniciar Sesión</router-link>
+                <router-link to="/register" class="font-semibold text-white">Registrarse</router-link>
             </div>
         </nav>
 
@@ -46,12 +46,12 @@
         <div v-if="isMenuOpen"
             class="lg:hidden absolute top-20 inset-x-0 z-50 bg-[#181818] py-4 px-6 shadow-lg rounded-b-lg transition-all duration-300 ease-in-out">
             <div class="flex flex-col space-y-4">
-                <a href="#" class="font-semibold text-white py-2 block">INICIO</a>
+                <router-link to="/" class="font-semibold text-white py-2 block">INICIO</router-link>
                 <a href="#" class="font-semibold text-white py-2 block">QUIÉNES SOMOS</a>
-                <a href="#" class="font-semibold text-white py-2 block">CONTÁCTANOS</a>
+                <router-link to="/contact" class="font-semibold text-white py-2 block">CONTÁCTANOS</router-link>
                 <hr class="border-gray-600">
-                <a href="#" class="font-semibold text-white py-2 block">Iniciar Sesión</a>
-                <a href="#" class="font-semibold text-white py-2 block">Registrarse</a>
+                <router-link to="/login" class="font-semibold text-white py-2 block">Iniciar Sesión</router-link>
+                <router-link to="/register" class="font-semibold text-white py-2 block">Registrarse</router-link>
             </div>
         </div>
 

@@ -33,8 +33,8 @@
 
         <div class="hidden lg:flex lg:gap-x-12">
           <a href="#" class="font-semibold text-white">INICIO</a>
-          <a href="#" class="font-semibold text-white">QUIÉNES SOMOS</a>
-          <a href="#" class="font-semibold text-white">CONTÁCTANOS</a>
+          <a href="#quienes-somos" class="font-semibold text-white">QUIÉNES SOMOS</a>
+          <router-link to="/contact" class="font-semibold text-white">CONTÁCTANOS</router-link>
         </div>
         <div class="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-12">
           <router-link to="/login" class="font-semibold text-white">Iniciar Sesión</router-link>
@@ -47,11 +47,11 @@
         class="lg:hidden absolute top-20 inset-x-0 z-50 bg-[#181818] py-4 px-6 shadow-lg rounded-b-lg transition-all duration-300 ease-in-out">
         <div class="flex flex-col space-y-4">
           <a href="#" class="font-semibold text-white py-2 block">INICIO</a>
-          <a href="#" class="font-semibold text-white py-2 block">QUIÉNES SOMOS</a>
-          <a href="#" class="font-semibold text-white py-2 block">CONTÁCTANOS</a>
+          <a href="#quienes-somos" class="font-semibold text-white py-2 block">QUIÉNES SOMOS</a>
+          <router-link to="/contact" class="font-semibold text-white py-2 block">CONTÁCTANOS</router-link>
           <hr class="border-gray-600">
-          <a href="#" class="font-semibold text-white py-2 block">Iniciar Sesión</a>
-          <a href="#" class="font-semibold text-white py-2 block">Registrarse</a>
+          <router-link to="/login" class="font-semibold text-white">Iniciar Sesión</router-link>
+          <router-link to="/register" class="font-semibold text-white">Registrarse</router-link>
         </div>
       </div>
 
@@ -81,7 +81,8 @@
             </div>
 
             <div>
-              <a href="#" class="bg-[#FF8000] text-white px-5 py-2 rounded-full text-xl tracking-wide shadow-xl">
+              <a href="#explorar-mas"
+                class="bg-[#FF8000] text-white px-5 py-2 rounded-full text-xl tracking-wide shadow-xl">
                 Explorar más
               </a>
             </div>
@@ -101,7 +102,7 @@
     <!-- Sección de Cards con fondo blanco -->
     <div class="bg-white w-full mt-28">
       <div class="container mx-auto px-6 lg:px-8">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div id="explorar-mas" class="grid grid-cols-2 md:grid-cols-4 gap-8">
 
           <!-- Card 1 -->
           <div
@@ -163,9 +164,8 @@
             </div>
           </div>
         </div>
-
         <!-- Sección Quienes somos -->
-        <div class="relative bg-[#FFCE9D] py-16 sm:py-12 mb-10 rounded-[8rem] rounded-tr-none">
+        <div id="quienes-somos" class="relative bg-[#FFCE9D] py-16 sm:py-12 mb-10 rounded-[8rem] rounded-tr-none">
           <div class="mx-auto max-w-7xl px-6 lg:px-8">
             <div class="text-center mb-16">
               <h2 class="titulo text-4xl text-[#FF8000]">¿Quiénes somos?</h2>
@@ -193,16 +193,17 @@
                   </p>
                 </div>
                 <div class="flex justify-center">
-                  <button
+                  <router-link to="/contact"
                     class="mt-4 bg-[#E67300] text-white px-8 py-3 rounded-full hover:bg-[#FF8000] transition-colors">
                     Contáctanos
-                  </button>
+                  </router-link>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
     </div>
 
     <!-- Pie de página -->
@@ -213,6 +214,7 @@
 </template>
 
 <script lang="ts" setup>
+import router from '@/router';
 import { ref } from 'vue';
 const isMenuOpen = ref(false);
 </script>

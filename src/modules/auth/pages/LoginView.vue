@@ -33,10 +33,9 @@
                         </div>
                     </div>
                     <div class="flex justify-end">
-                        <a href="#" class="texto text-sm text-[#4285F4] hover:text-[#2270f1]">
+                        <router-link to="/password" class="texto text-sm text-[#4285F4] hover:text-[#2270f1]">
                             ¿Has olvidado tu contraseña?
-                        </a>
-                    </div>
+                        </router-link>                 </div>
                 </div>
                 <div class="flex items-center justify-center mb-8">
                     <button
@@ -54,7 +53,7 @@
                 <div class="flex-grow border-t border-[#C2C2C2]"></div>
             </div>
 
-            <div class="flex items-center justify-center">
+            <div class="flex items-center justify-center text-center">
                 <router-link to="/register" class="texto w-full bg-white hover:bg-gray-100 text-[#FD7401] font-semibold py-2 px-4 border border-[#FD7401] rounded shadow">Registrarse</router-link>
             </div>
 

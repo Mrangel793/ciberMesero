@@ -18,6 +18,26 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: () => import('@/modules/auth/pages/RegisterView.vue'),
+    },
+    {
+      path: '/password',
+      name: 'password',
+      component: () => import('@/modules/auth/pages/ForgotPassword.vue'),
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: () => import('@/modules/home/pages/ContactView.vue'),
+    },
+    {
+      path: '/chat',
+      name: 'chat',
+      component: () => import('@/modules/usuario/pages/ChatView.vue'),
+    },
+    {
+      path: '/menu',
+      name: 'menu',
+      component: () => import('@/modules/usuario/pages/MenuView.vue'),
     }
     // {
     //   path: '/about',
