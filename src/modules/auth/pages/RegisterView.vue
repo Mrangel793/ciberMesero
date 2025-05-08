@@ -3,7 +3,7 @@
     :style="{ backgroundImage: `url(${fondo})` }">
     <div class="bg-white p-8 rounded-xl shadow-lg shadow-[#E78D1B63] w-full max-w-md">
       <h1 class="texto text-3xl font-bold text-center mb-6">REGISTRO</h1>
-      <form @submit.prevent="register">
+      <form @submit.prevent="handleSubmit">
         <!-- Nombre -->
         <div class="mb-4">
           <label for="name" class="texto block text-md font-bold mb-2">Nombre completo</label>
@@ -61,6 +61,15 @@
         </div>
       </form>
 
+      <!-- Alertas -->
+      <div v-if="successMessage" class="mt-4 bg-green-100 text-green-800 px-4 py-2 rounded text-center">
+        {{ successMessage }}
+      </div>
+      <div v-if="errorMessage" class="mt-4 bg-red-100 text-red-800 px-4 py-2 rounded text-center">
+        {{ errorMessage }}
+      </div>
+
+
       <!-- Estilos de '---- OR ----' -->
       <div class="flex items-center mb-4 mt-8">
         <div class="flex-grow border-t border-[#C2C2C2]"></div>
@@ -101,39 +110,26 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import fondo from '@/assets/imagenes/fondo.png'; // Imagen de fondo
-import { auth } from '@/firebaseConfig';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { ref } from 'vue';
-import type { User } from '@/interfaces/user.interface';
+import { useRoute } from 'vue-router';
+import { useRegister } from '@/modules/auth/composables/useRegister';
 
-const name = ref<string>('');
-const email = ref<string>('');
+const route = useRoute();
+
+// Campos del formulario
+const name = ref('');
+const email = ref('');
 const password = ref('');
-const errorMessage = ref('');
+const role = ref((route.query.role as string) || 'cliente'); // o capturado por query param
+const plan = ref('basico');
 
+// Registro
+const { register, errorMessage, successMessage } = useRegister();
 
-const register = async () => {
-  errorMessage.value = '';
-
-  try {
-    await createUserWithEmailAndPassword(auth, email.value, password.value);
-    console.log('User registered');
-  } catch (error: any) {
-    console.log(error.response.data.message);
-    errorMessage.value = error.response.data.message;
-  }
-
-  return {
-    name,
-    email,
-    password,
-    errorMessage,
-    register
-  }
-}
-
-
-
+const handleSubmit = () => {
+  register(name.value, email.value, password.value, role.value, plan.value);
+};
 </script>
+

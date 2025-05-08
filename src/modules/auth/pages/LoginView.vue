@@ -3,7 +3,7 @@
         :style="{ backgroundImage: `url(${fondo})` }">
         <div class="bg-white p-8 rounded-xl shadow-lg shadow-[#E78D1B63] w-full max-w-md m-auto">
             <h1 class="text-2xl font-semibold text-center mb-6 texto">INICIAR SESIÓN</h1>
-            <form @submit.prevent="login">
+            <form @submit.prevent="handleLogin">
                 <div class="mb-4">
                     <label for="email" class="block text-md font-bold mb-2 texto">Correo electrónico</label>
                     <div class="relative">
@@ -46,6 +46,14 @@
                 </div>
             </form>
 
+            <!-- Alertas -->
+            <div v-if="successMessage" class="mt-4 bg-green-100 text-green-800 px-4 py-2 rounded text-center">
+                {{ successMessage }}
+            </div>
+            <div v-if="errorMessage" class="mt-4 bg-red-100 text-red-800 px-4 py-2 rounded text-center">
+                {{ errorMessage }}
+            </div>
+
             <!-- Estilos de '---- OR ----' -->
             <div class="flex items-center my-4 mb-8">
                 <div class="flex-grow border-t border-[#C2C2C2]"></div>
@@ -54,7 +62,8 @@
             </div>
 
             <div class="flex items-center justify-center text-center">
-                <router-link to="/register" class="texto w-full bg-white hover:bg-gray-100 text-[#FD7401] font-semibold py-2 px-4 border border-[#FD7401] rounded shadow">Registrarse</router-link>
+                <router-link to="/register"
+                    class="texto w-full bg-white hover:bg-gray-100 text-[#FD7401] font-semibold py-2 px-4 border border-[#FD7401] rounded shadow">Registrarse</router-link>
             </div>
 
             <div class="flex justify-center mt-4 space-x-4">
@@ -90,71 +99,18 @@
     </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import fondo from '@/assets/imagenes/fondo.png';
-import { signInWithEmailAndPassword, getAuth  } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { ref } from 'vue';
+import { useLogin } from '@/modules/auth/composables/useLogin';
 
-// Define el nombre del componente
-defineOptions({
-    name: 'LoginView'
-});
-
-// Inicializa Firebase Auth y Firestore
-const auth = getAuth();
-const db = getFirestore();
-
-// Variables reactivas
 const email = ref('');
 const password = ref('');
-const errorMessage = ref('');
-const userRole = ref(null);
 
-// Función para iniciar sesión
-const login = async () => {
-    errorMessage.value = '';
+const { login, errorMessage, successMessage } = useLogin();
 
-    try {
-        const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
-        const user = userCredential.user;
-        console.log('Usuario autenticado con UID:', user.uid);
-        console.log('User logged in');
-
-        // 1. Obtener el UID del usuario autenticado
-        const uid = user.uid;
-
-        // 2. Consultar Firestore para obtener el documento del usuario
-        const userDocRef = doc(db, 'users', uid);
-        const userDocSnap = await getDoc(userDocRef);
-
-        if (userDocSnap.exists()) {
-            const userData = userDocSnap.data();
-            const fetchedUserRole = userData.role; // Obtiene el rol del documento
-            console.log('Rol del usuario obtenido de Firestore:', fetchedUserRole);
-
-            // 3. Guardar el rol en la ref 'userRole' (estado local del componente)
-            userRole.value = fetchedUserRole; // Asigna el rol a la ref 'userRole'
-
-        } else {
-            console.error('Documento de usuario no encontrado en Firestore para UID:', uid);
-            errorMessage.value = 'Error al obtener información del usuario.';
-            userRole.value = null; // Asegúrate de resetear userRole en caso de error
-            return; // Importante salir de la función si no se encuentra el documento
-        }
-
-    } catch (error: any) {
-        console.error('Error al iniciar sesión:', error.code, error.message);
-        errorMessage.value = error.message;
-        userRole.value = null; // Asegúrate de resetear userRole en caso de error
-    }
-    return {
-        email,
-        password,
-        errorMessage,
-        login,
-        userRole
-    }
+const handleLogin = () => {
+  login(email.value, password.value);
 };
-
 </script>
+

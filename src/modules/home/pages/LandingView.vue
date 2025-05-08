@@ -37,8 +37,8 @@
           <router-link to="/contact" class="font-semibold text-white">CONTÁCTANOS</router-link>
         </div>
         <div class="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-12">
-          <router-link to="/login" class="font-semibold text-white">Iniciar Sesión</router-link>
-          <router-link to="/register" class="font-semibold text-white">Registrarse</router-link>
+          <router-link to="login" class="font-semibold text-white">Iniciar Sesión</router-link>
+          <router-link to="register" class="font-semibold text-white">Registrarse</router-link>
         </div>
       </nav>
 
@@ -206,6 +206,232 @@
 
     </div>
 
+    <!-- ============================= -->
+    <!-- Sección de Planes -->
+    <!-- ============================= -->
+    <div class="bg-gray-50 py-16">
+      <div class="container mx-auto px-6 lg:px-8">
+        <h2 class="text-4xl font-bold text-center text-gray-900 mb-12">Nuestros Planes</h2>
+        <div class="grid gap-8 lg:grid-cols-3">
+
+          <!-- Plan Básico -->
+          <div class="flex flex-col bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="px-6 py-8 text-center">
+              <div class="inline-flex items-center justify-center w-10 h-10 bg-green-500 text-white rounded-full mb-4">B
+              </div>
+              <h3 class="text-2xl font-semibold text-gray-800">Básico</h3>
+              <p class="mt-2 text-3xl font-bold text-gray-900">
+                $39.000 <span class="text-base font-medium text-gray-600">COP/mes</span>
+              </p>
+              <p class="mt-1 text-sm text-gray-600">Prueba gratuita: 7 días</p>
+            </div>
+            <ul class="flex-1 px-6 space-y-3">
+              <li class="flex justify-between items-center">
+                <span>Gestión de Menú</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Chatbot de Texto</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Gestión de Pedidos</span>
+                <XMarkIcon class="w-5 h-5 text-red-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Personalización del Chatbot</span>
+                <XMarkIcon class="w-5 h-5 text-red-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Panel con estadísticas básicas</span>
+                <XMarkIcon class="w-5 h-5 text-red-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Mesas/chats simultáneos</span>
+                <span class="font-medium">Hasta 3</span>
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Acceso a feedback de clientes</span>
+                <XMarkIcon class="w-5 h-5 text-red-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Integración de voz (Union Iot)</span>
+                <XMarkIcon class="w-5 h-5 text-red-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Acceso a promociones/cupones inteligentes</span>
+                <XMarkIcon class="w-5 h-5 text-red-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Soporte técnico</span>
+                <span class="font-medium">Correo</span>
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Actualizaciones automáticas</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Posibilidad de cancelación</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+            </ul>
+            <!-- Boton -->
+            <div class="px-6 pb-8">
+              <router-link :to="{ name: 'Register', query: { role: 'admin', plan: 'basico' } }"
+                class="block w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition text-center">
+                Seleccionar Plan
+              </router-link>
+            </div>
+          </div>
+
+          <!-- Plan Intermedio -->
+          <div class="flex flex-col bg-white rounded-2xl shadow-xl ring-2 ring-yellow-200 overflow-hidden">
+            <div class="px-6 py-8 text-center bg-yellow-50">
+              <div class="inline-flex items-center justify-center w-10 h-10 bg-yellow-400 text-white rounded-full mb-4">
+                I</div>
+              <h3 class="text-2xl font-semibold text-gray-800">Intermedio</h3>
+              <p class="mt-2 text-3xl font-bold text-gray-900">
+                $79.000 <span class="text-base font-medium text-gray-600">COP/mes</span>
+              </p>
+              <p class="mt-1 text-sm text-gray-600">Prueba gratuita: 7 días</p>
+            </div>
+            <ul class="flex-1 px-6 space-y-3">
+              <li class="flex justify-between items-center">
+                <span>Gestión de Menú</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Chatbot de Texto</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Gestión de Pedidos</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Personalización del Chatbot</span>
+                <span class="flex items-center">
+                  <CheckIcon class="w-5 h-5 text-green-500" />
+                  <small class="ml-1 text-gray-500">(limitada)</small>
+                </span>
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Panel con estadísticas básicas</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Mesas/chats simultáneos</span>
+                <span class="font-medium">Hasta 8</span>
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Acceso a feedback de clientes</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Integración de voz (Union Iot)</span>
+                <XMarkIcon class="w-5 h-5 text-red-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Acceso a promociones/cupones inteligentes</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Soporte técnico</span>
+                <span class="font-medium">Correo</span>
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Actualizaciones automáticas</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Posibilidad de cancelación</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+            </ul>
+            <!-- Boton -->
+            <div class="px-6 pb-8">
+              <router-link :to="{ name: 'Register', query: {role:'admin', plan:'intermedio'}}" class="block w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition text-center">
+                Seleccionar Plan
+              </router-link>
+            </div>
+          </div>
+
+          <!-- Plan Avanzado -->
+          <div class="flex flex-col bg-white rounded-2xl shadow-xl ring-2 ring-orange-200 overflow-hidden">
+            <div class="px-6 py-8 text-center bg-orange-50">
+              <div class="inline-flex items-center justify-center w-10 h-10 bg-orange-500 text-white rounded-full mb-4">
+                A</div>
+              <h3 class="text-2xl font-semibold text-gray-800">Avanzado</h3>
+              <p class="mt-2 text-3xl font-bold text-gray-900">
+                $149.000 <span class="text-base font-medium text-gray-600">COP/mes</span>
+              </p>
+              <p class="mt-1 text-sm text-gray-600">Prueba gratuita: 7 días</p>
+            </div>
+            <ul class="flex-1 px-6 space-y-3">
+              <li class="flex justify-between items-center">
+                <span>Gestión de Menú</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Chatbot de Texto</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Gestión de Pedidos</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Personalización del Chatbot</span>
+                <span class="flex items-center">
+                  <CheckIcon class="w-5 h-5 text-green-500" />
+                  <small class="ml-1 text-gray-500">(total, con IA entrenable)</small>
+                </span>
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Panel con estadísticas básicas</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Mesas/chats simultáneos</span>
+                <span class="font-medium">Ilimitado</span>
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Acceso a feedback de clientes</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Integración de voz (Union Iot)</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Acceso a promociones/cupones inteligentes</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Soporte técnico</span>
+                <span class="font-medium">Proritario</span>
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Actualizaciones automáticas</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+              <li class="flex justify-between items-center">
+                <span>Posibilidad de cancelación</span>
+                <CheckIcon class="w-5 h-5 text-green-500" />
+              </li>
+            </ul>
+            <!-- Boton -->
+            <div class="px-6 pt-6 pb-8">
+              <router-link :to="{name: 'Register', query:{role:'admin', plan:'avanzado'}}" class="block w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition text-center">
+                Seleccionar Plan
+              </router-link>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
     <!-- Pie de página -->
     <footer class="bg-[#FF8000] text-center py-1">
       Copyright © [2025] [Nombre de tu plataforma]
@@ -216,5 +442,8 @@
 <script lang="ts" setup>
 import router from '@/router';
 import { ref } from 'vue';
+import { CheckIcon, XMarkIcon } from '@heroicons/vue/24/solid'
 const isMenuOpen = ref(false);
+
+
 </script>

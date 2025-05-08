@@ -1,6 +1,19 @@
 import LandingView from '@/modules/home/pages/LandingView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
+import {
+  HomeIcon,
+  ClipboardDocumentListIcon,
+  TagIcon,
+  BookOpenIcon,
+  FolderIcon,
+  BuildingStorefrontIcon,
+  ChartBarIcon,
+  UsersIcon,
+  QuestionMarkCircleIcon,
+  Cog6ToothIcon
+} from '@heroicons/vue/24/outline'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -11,33 +24,70 @@ const router = createRouter({
     },
     {
       path: '/login',
-      name: 'login',
+      name: 'Login',
       component: () => import('@/modules/auth/pages/LoginView.vue'),
     },
     {
       path: '/register',
-      name: 'register',
+      name: 'Register',
       component: () => import('@/modules/auth/pages/RegisterView.vue'),
     },
+
+    // --- RUTAS PRIVADAS / MENÚ ---
     {
-      path: '/password',
-      name: 'password',
-      component: () => import('@/modules/auth/pages/ForgotPassword.vue'),
+      path: '/admin/dashboard',
+      name: 'Dashboard',
+      component: () => import('@/modules/admin/pages/DashboardView.vue'),
+      meta: {
+        showInMenu: true,
+        title: 'AdminDashboard',
+        icon: 'HomeIcon',
+        roles: ['admin'],
+      }
     },
     {
-      path: '/contact',
-      name: 'contact',
-      component: () => import('@/modules/home/pages/ContactView.vue'),
+      path: '/admin/orders',
+      name: 'Pedidos',
+      component: () => import('@/modules/admin/pages/OrdersView.vue'),
+      meta: {
+        showInMenu: true,
+        title: 'Pedidos',
+        icon: 'HomeIcon',
+        roles: ['admin'],
+      }
     },
     {
-      path: '/chat',
-      name: 'chat',
-      component: () => import('@/modules/usuario/pages/ChatView.vue'),
+      path: '/admin/promotions',
+      name: 'Promociones',
+      component: () => import('@/modules/admin/pages/PromotionsView.vue'),
+      meta: {
+        showInMenu: true,
+        title: 'Promociones',
+        icon: 'HomeIcon',
+        roles: ['admin'],
+      }
     },
     {
-      path: '/menu',
-      name: 'menu',
-      component: () => import('@/modules/usuario/pages/MenuView.vue'),
+      path: '/admin/menu',
+      name: 'Menu',
+      component: () => import('@/modules/admin/pages/MenuView.vue'),
+      meta: {
+        showInMenu: true,
+        title: 'Menu',
+        icon: 'HomeIcon',
+        roles: ['admin'],
+      }
+    },
+    {
+      path: '/admin/categories',
+      name: 'Categorías',
+      component: () => import('@/modules/admin/pages/CategoriesView.vue'),
+      meta: {
+        showInMenu: true,
+        title: 'Menu',
+        icon: 'HomeIcon',
+        roles: ['admin'],
+      }
     }
     // {
     //   path: '/about',
