@@ -1,4 +1,4 @@
-import type { Category } from "../interfaces/Category";
+import type { Category } from "../entities/Category";
 import type { CategoriaRepository } from "../repositories/CategoriaRepository";
 
 export class ObtenerCategoriasUseCase {

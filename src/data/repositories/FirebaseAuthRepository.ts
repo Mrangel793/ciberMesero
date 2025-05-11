@@ -1,6 +1,6 @@
 
 import type { AuthRepository } from '@/core/repositories/AuthRepository';
-import type { AuthenticatedUser } from '@/core/interfaces/AuthenticatedUser';
+import type { AuthenticatedUser } from '@/core/entities/AuthenticatedUser';
 import { auth, db } from '@/data/firebase/firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';

@@ -1,7 +1,7 @@
 import { CrearPlatoUseCase } from '@/core/usecases/CrearPlatoUseCase'
 import { FirebaseMenuRepository } from '@/data/repositories/FirebaseMenuRepository'
 import { useAuthStore } from '@/stores/auth'
-import type { MenuItem } from '@/core/interfaces/MenuItem'
+import type { MenuItem } from '@/core/entities/MenuItem'
 
 const useCase = new CrearPlatoUseCase(new FirebaseMenuRepository())
 

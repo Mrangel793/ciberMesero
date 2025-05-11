@@ -1,4 +1,4 @@
-import type { MenuItem } from "../interfaces/MenuItem";
+import type { MenuItem } from "../entities/MenuItem";
 import type { PlatoRepository } from "../repositories/PlatoRepository";
 
 export class ObtenerPlatosUseCase {

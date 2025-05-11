@@ -60,7 +60,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import { useRouter } from 'vue-router'
 import NuevaCategoriaModal from '../components/categories/NuevaCategoriaModal.vue';
-import type { Category } from '@/core/interfaces/Category';
+import type { Category } from '@/core/entities/Category';
 
 const showNewCat = ref(false)
 const { categorias, cargarCategorias } = useCategorias();

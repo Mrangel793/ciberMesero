@@ -1,5 +1,5 @@
-import type { MenuItem } from "@/core/interfaces/MenuItem";
-import type { RawMenuItem } from "@/core/interfaces/RawMenuItem";
+import type { MenuItem } from "@/core/entities/MenuItem";
+import type { RawMenuItem } from "@/core/entities/RawMenuItem";
 import * as XLSX from 'xlsx';
 import type { PlatoExcelImporter } from "./PlatoExcelImporter";
 

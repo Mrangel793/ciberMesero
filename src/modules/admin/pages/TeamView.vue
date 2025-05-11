@@ -74,7 +74,12 @@
           </tbody>
         </table>
       </div>
-
+      <!-- Mensaje si no hay resultados -->
+      <div v-if="filteredMembers.length === 0" class="text-center text-gray-500 mt-4">
+        No se encontraron resultados para "{{ searchQuery }}"
+      </div>
+      <!-- Modal -->
+      <NuevoEmpleadoModal :visible="showNewEmployee" @close="handleCloseModal" @save="handleSaveMember" />
       <!-- PAGINACIÓN -->
       <div class="flex items-center justify-between">
         <div class="flex items-center">
@@ -118,25 +123,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { useAuthStore } from '@/stores/auth'
+import { ref, computed, watch } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import type { TeamMember } from '@/core/entities/TeamMember';
 import {
   MagnifyingGlassIcon as SearchIcon,
   BellIcon,
   UserCircleIcon,
   EyeIcon,
   TrashIcon
-} from '@heroicons/vue/24/outline'
+} from '@heroicons/vue/24/outline';
 
-interface TeamMember {
-  id: number
-  firstName: string
-  lastName: string
-  document: string
-  phone: string
-  email: string
-  role: string
-}
+import NuevoEmpleadoModal from '../components/team/NuevoEmpleadoModal.vue';
+
+
 
 const auth = useAuthStore()
 const user = {
@@ -144,7 +144,8 @@ const user = {
 }
 
 // Búsqueda
-const searchQuery = ref('')
+const searchQuery = ref('');
+const showNewEmployee = ref(false)
 
 // Datos de ejemplo
 const allMembers = ref<TeamMember[]>([
@@ -181,6 +182,10 @@ function goToPage(page: number) {
 
 // Acciones
 function openAddMember() {
-  // Abrir modal de “Nuevo Miembro”
+  showNewEmployee.value = true;
+}
+
+function handleCloseModal() {
+  showNewEmployee.value = false;
 }
 </script>

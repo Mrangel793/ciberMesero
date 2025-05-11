@@ -1,7 +1,7 @@
 import { db } from "../firebase/firebaseConfig";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import type { CategoriaRepository } from "@/core/repositories/CategoriaRepository";
-import type { Category } from "@/core/interfaces/Category";
+import type { Category } from "@/core/entities/Category";
 
 export class FirebaseCategoriaRepository implements CategoriaRepository {
   async crear(uidRestaurante: string, nombre: string): Promise<void> {

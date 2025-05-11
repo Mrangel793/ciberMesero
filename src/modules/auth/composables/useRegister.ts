@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import type { User } from '@/core/interfaces/User'
+import type { User } from '@/core/entities/User'
 import { FirebaseUserRepository } from '@/data/repositories/FirebaseUserRepository'
 import { RegisterUseCase } from '@/core/usecases/RegisterUseCase'
 const registerUseCase = new RegisterUseCase(new FirebaseUserRepository())

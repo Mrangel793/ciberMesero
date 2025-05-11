@@ -1,4 +1,4 @@
-import type { AuthenticatedUser } from "@/core/interfaces/AuthenticatedUser";
+import type { AuthenticatedUser } from "@/core/entities/AuthenticatedUser";
 
 
 export interface AuthRepository {

@@ -1,6 +1,6 @@
 import { db } from '@/data/firebase/firebaseConfig';
 import { doc, setDoc, collection, getDocs } from 'firebase/firestore';
-import type { MenuItem } from '@/core/interfaces/MenuItem';
+import type { MenuItem } from '@/core/entities/MenuItem';
 
 export class FirebaseMenuRepository {
   async guardarMenu(uidRestaurante: string, menuItems: MenuItem[]): Promise<void> {

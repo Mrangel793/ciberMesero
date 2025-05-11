@@ -1,4 +1,4 @@
-import type { User } from '@/core/interfaces/User'
+import type { User } from '@/core/entities/User'
 import type { UserRepository } from '@/core/repositories/UserRepository'
 
 export class RegisterUseCase {

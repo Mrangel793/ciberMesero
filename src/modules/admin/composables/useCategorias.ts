@@ -1,7 +1,7 @@
 import { ref, onMounted } from 'vue'
 import { ObtenerCategoriasUseCase } from '@/core/usecases/ObtenerCategoriasUseCase'
 import { FirebaseCategoriaRepository } from '@/data/repositories/FirebaseCategoriaRepository'
-import type { Category } from '@/core/interfaces/Category'
+import type { Category } from '@/core/entities/Category'
 import { useAuthStore } from '@/stores/auth'
 
 const repo = new FirebaseCategoriaRepository()

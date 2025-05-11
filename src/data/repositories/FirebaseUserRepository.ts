@@ -1,4 +1,4 @@
-import type { User } from '@/core/interfaces/User';
+import type { User } from '@/core/entities/User';
 import type { UserRepository } from '@/core/usecases/UserRepository';
 import { auth, db } from '@/data/firebase/firebaseConfig';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';

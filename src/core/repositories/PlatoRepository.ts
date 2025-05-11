@@ -1,4 +1,4 @@
-import type { MenuItem } from "../../core/interfaces/MenuItem";
+import type { MenuItem } from "../entities/MenuItem";
 
 export interface PlatoRepository {
 

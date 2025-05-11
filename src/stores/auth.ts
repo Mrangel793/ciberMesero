@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { AuthenticatedUser } from '@/core/interfaces/AuthenticatedUser';
+import type { AuthenticatedUser } from '@/core/entities/AuthenticatedUser';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/data/firebase/firebaseConfig';

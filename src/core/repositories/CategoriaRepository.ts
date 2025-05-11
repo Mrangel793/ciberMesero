@@ -1,4 +1,4 @@
-import type { Category } from "../interfaces/Category";
+import type { Category } from "../entities/Category";
 
 export interface CategoriaRepository {
   crear(uid:string, nombre: string): Promise<void>;
