@@ -1,5 +1,5 @@
 <template>
-  <Sidebar>
+
     <div class="w-full h-full bg-[#F9EBD9] space-y-8">
 
       <!-- HEADER -->
@@ -128,13 +128,13 @@
         </div>
       </div>
     </div>
-  </Sidebar>
+
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import Chart from 'chart.js/auto';
-import Sidebar from '@/modules/auth/components/Sidebar.vue';
+
 
 import { useAuthStore } from '@/stores/auth'
 

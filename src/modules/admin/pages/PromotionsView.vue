@@ -1,5 +1,5 @@
 <template>
-    <Sidebar>
+
         <div class="p-6 min-h-screen bg-[#F9EBD9] space-y-6">
             <!-- 1) HEADER -->
             <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
@@ -72,12 +72,11 @@
             <!-- Aquí inyectamos la modal -->
             <NuevaPromocionModal :visible="showModal" @close="showModal = false" @create="handleCreate" />
         </div>
-    </Sidebar>
+
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import Sidebar from '@/modules/auth/components/Sidebar.vue'
 import { useAuthStore } from '@/stores/auth'
 import NuevaPromocionModal from '../components/promotions/NuevaPromocionModal.vue'
 import {

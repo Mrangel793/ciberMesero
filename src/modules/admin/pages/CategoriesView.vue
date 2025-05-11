@@ -1,5 +1,4 @@
 <template>
-  <Sidebar>
     <div class="p-6 min-h-screen bg-[#F9EBD9] space-y-6">
       <!-- HEADER: Título, buscador, campana y avatar -->
       <div class="flex items-center justify-between">
@@ -45,12 +44,12 @@
       <!-- Modal de nueva categoría -->
       <NuevaCategoriaModal :visible="showNewCat" @close="handleCloseModal" @save="handleSaveCategory" />
     </div>
-  </Sidebar>
+
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import Sidebar from '@/modules/auth/components/Sidebar.vue';
+
 import { useCategorias } from '../composables/useCategorias';
 
 import {

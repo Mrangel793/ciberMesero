@@ -1,35 +1,50 @@
-/**
- * src/stores/auth.ts
- *
- * Store de autenticación y autorización global de la aplicación.
- *
- * - Guarda la información del usuario logueado (nombre y rol).
- * - Permite conocer el estado de sesión en cualquier componente.
- * - Facilita el control de acceso a rutas y elementos de UI según el rol.
- * - Métodos:
- *     • login(payload: User): almacena los datos del usuario tras el login.
- *     • logout(): limpia la sesión del usuario.
- *
- * Ejemplo de uso:
- *   const auth = useAuthStore();
- *   if (auth.user?.role === 'admin') { ... }
- */
-
 import { defineStore } from 'pinia';
 import type { AuthenticatedUser } from '@/core/interfaces/AuthenticatedUser';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '@/data/firebase/firebaseConfig';
+
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: null as AuthenticatedUser | null
+    user: null as AuthenticatedUser | null,
+    loading: true,
   }),
+
   actions: {
-    login(payload: AuthenticatedUser) {
-      this.user = payload
+    // 👉 Cargar usuario desde Firestore
+    async fetchUser(firebaseUser: any) {
+      const docRef = doc(db, 'users', firebaseUser.uid);
+      const userSnap = await getDoc(docRef);
+
+      if (userSnap.exists()) {
+        this.user = userSnap.data() as AuthenticatedUser;
+      } else {
+        this.user = null;
+      }
     },
-    logout() {
-      this.user = null
+
+    // 👉 Escucha el estado de autenticación de Firebase
+    initAuthListener() {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          await this.fetchUser(user);
+        } else {
+          this.user = null;
+        }
+        this.loading = false;
+      });
+    },
+
+    // ✅ Login (usualmente ya se hace en otro lado, pero puedes centralizar aquí)
+    login(user: AuthenticatedUser) {
+      this.user = user;
+    },
+
+    // ✅ Logout completo y redirección
+    async logout() {
+      await signOut(auth);
+      this.user = null;
     }
   }
-})
-
-
+});

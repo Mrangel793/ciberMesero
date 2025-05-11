@@ -1,5 +1,5 @@
 <template>
-  <Sidebar>
+
     <div class="p-6 min-h-screen bg-[#F9EBD9] space-y-6">
       <!-- HEADER -->
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -119,13 +119,12 @@
       <!-- Modal de Importación -->
       <ImportMenuModal :visible="showImportModal" @close="showImportModal = false" @import="handleImport" />
     </div>
-  </Sidebar>
+
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import Sidebar from '@/modules/auth/components/Sidebar.vue';
 import NuevoPlatilloModal from '../components/menu/NuevoPlatilloModal.vue';
 import ImportMenuModal from '../components/menu/ImportMenuModal.vue';
 import { useObtenerPlatos } from '../composables/useObtenerPlatos';

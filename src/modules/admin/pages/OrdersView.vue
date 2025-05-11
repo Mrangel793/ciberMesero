@@ -1,5 +1,5 @@
 <template>
-    <Sidebar>
+
       <div class="w-full h-full bg-[#F9EBD9] space-y-8">
         <!-- 1) HEADER: título, buscador, campana y avatar -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
@@ -15,14 +15,14 @@
               />
             </div>
             <BellIcon class="w-6 h-6 text-gray-600 hover:text-gray-800 cursor-pointer" />
-            <!-- <img
+            <img
               :src="user.avatar"
               alt="avatar"
               class="w-8 h-8 rounded-full object-cover"
-            /> -->
+            />
           </div>
         </div>
-  
+
         <!-- 2) FILTROS: restaurante y fecha -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -44,7 +44,7 @@
             />
           </div>
         </div>
-  
+
         <!-- 3) GRID DE TICKETS -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           <div
@@ -59,20 +59,20 @@
                 <h3 class="text-lg font-semibold">{{ order.restaurant }}</h3>
               </div>
               <span
-                :class="order.paymentStatus === 'pago realizado' 
-                  ? 'text-green-600' 
+                :class="order.paymentStatus === 'pago realizado'
+                  ? 'text-green-600'
                   : 'text-red-600'"
                 class="text-sm font-medium"
               >
                 {{ order.paymentStatus }}
               </span>
             </div>
-  
+
             <!-- Detalles -->
             <p class="text-sm text-gray-700">Fecha del pedido: {{ order.date }}</p>
             <p class="text-sm text-gray-700 mb-2">Hora: {{ order.time }}</p>
             <p class="text-sm text-gray-700">Cliente: {{ order.client }}</p>
-  
+
             <!-- Productos -->
             <div class="mt-2">
               <span class="text-sm font-medium text-gray-800">Productos:</span>
@@ -83,13 +83,13 @@
                 </li>
               </ul>
             </div>
-  
+
             <!-- Total -->
             <div class="mt-2 flex justify-between">
               <span class="font-medium">Total</span>
               <span class="text-red-600 font-semibold">{{ order.total }}</span>
             </div>
-  
+
             <!-- Observaciones -->
             <div class="mt-3">
               <label class="block text-sm font-medium text-gray-700 mb-1">Observaciones adicionales</label>
@@ -100,7 +100,7 @@
                 class="w-full border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-orange-200"
               />
             </div>
-  
+
             <!-- Tipo de pago -->
             <div class="mt-3">
               <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de pago:</label>
@@ -112,7 +112,7 @@
                 <option>Tarjeta</option>
               </select>
             </div>
-  
+
             <!-- Estado del pedido -->
             <div class="mt-3">
               <label class="block text-sm font-medium text-gray-700 mb-1">Estado del pedido:</label>
@@ -126,27 +126,26 @@
           </div>
         </div>
       </div>
-    </Sidebar>
+
   </template>
-  
+
   <script setup lang="ts">
   import { ref } from 'vue'
-  import Sidebar from '@/modules/auth/components/Sidebar.vue';
   import { useAuthStore } from '@/stores/auth'
   import { BellIcon } from '@heroicons/vue/24/outline'
-  
+
   const auth = useAuthStore()
   const user = {
     name: auth.user?.name || 'Usuario',
-    // avatar: auth.user?.avatar || 'https://i.pravatar.cc/40'
+    avatar: auth.user?.avatar || 'https://i.pravatar.cc/40'
   }
-  
+
   // Filtros
   const searchQuery = ref('')
   const selectedRestaurant = ref('')
   const selectedDate = ref<string | null>(null)
   const restaurants = ref<string[]>(['McDonalds', 'Burger King', 'Pizza House'])
-  
+
   // Pedidos de ejemplo (luego traídos vía API)
   const orders = ref([
     {
@@ -168,4 +167,3 @@
     }
   ])
   </script>
-  
