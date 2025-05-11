@@ -188,4 +188,9 @@ function openAddMember() {
 function handleCloseModal() {
   showNewEmployee.value = false;
 }
+
+function handleSaveMember(member: TeamMember) {
+  allMembers.value.push(member)
+}
+
 </script>
