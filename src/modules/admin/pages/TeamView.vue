@@ -123,9 +123,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import type { TeamMember } from '@/core/entities/TeamMember';
+import { useObtenerEmpleados } from '../composables/useObtenerEmpleados';
 import {
   MagnifyingGlassIcon as SearchIcon,
   BellIcon,
@@ -142,23 +143,21 @@ const auth = useAuthStore()
 const user = {
   avatar: auth.user?.avatar || 'https://i.pravatar.cc/40'
 }
+const { empleados, cargarEmpleados, loading, error } = useObtenerEmpleados();
+
+onMounted(() => {
+  cargarEmpleados()
+});
 
 // Búsqueda
 const searchQuery = ref('');
 const showNewEmployee = ref(false)
 
-// Datos de ejemplo
-const allMembers = ref<TeamMember[]>([
-  { id: 1, firstName: 'Juan', lastName: 'Salcedo', document: '1002522023', phone: '32145698', email: 'Juan@gmail.com', role: 'Mesero' },
-  { id: 2, firstName: 'María', lastName: 'Gómez', document: '1002522034', phone: '31567890', email: 'Maria@gmail.com', role: 'Cocina' },
-  // …más miembros…
-])
-
 // Paginación
 const currentPage = ref(1)
 const pageSize    = ref(7)
 const filteredMembers = computed(() =>
-  allMembers.value.filter(m =>
+  empleados.value.filter(m =>
     [m.firstName, m.lastName, m.document, m.phone, m.email, m.role]
       .some(f => f.toLowerCase().includes(searchQuery.value.toLowerCase()))
   )
@@ -190,7 +189,7 @@ function handleCloseModal() {
 }
 
 function handleSaveMember(member: TeamMember) {
-  allMembers.value.push(member)
+  empleados.value.push(member)
 }
 
 </script>
