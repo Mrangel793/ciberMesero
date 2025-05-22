@@ -1,9 +1,9 @@
 import type { TeamMember } from "../entities/TeamMember";
 
 export interface TeamRepository {
-  create(member: TeamMember): Promise<void>;
+  create(member: Omit<TeamMember, 'id'>): Promise<string>;
   getAll(uid: string): Promise<TeamMember[]>;
-  // getById(uid: string, id: number): Promise<TeamMember | null>;
-  // update(member:TeamMember): Promise<void>;
-  // delete(uid: string, id: number): Promise<void>;
+  getById(uid: string): Promise<TeamMember | null>;
+  update(id:string, member:Partial<TeamMember>): Promise<void>;
+  delete(id: string): Promise<void>;
 }
