@@ -4,15 +4,15 @@ export interface MenuItem {
     /** Nombre del platillo */
     name: string
     /** URL o path a la imagen */
-    image?: string
+    imageUrl?: string
     /** Precio anterior (opcional, para tacharlo) */
     oldPrice?: string
     /** Precio actual */
     price: number
     /** Descripción dividida en líneas */
-    description: string[]
+    description?: string
     /** Está en promoción? */
-    onPromo: boolean
+    onPromo?: boolean
     /** Categoría a la que pertenece */
     category: string
   }

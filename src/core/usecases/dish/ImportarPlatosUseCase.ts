@@ -19,7 +19,7 @@ export class ImportarPlatosUseCase {
     await addDoc(collection(db, `users/${uid}/categorias`), { name: nombre })
   }
 
-  public async execute(file: File, uid: string): Promise<MenuItem[]> {
+  public async execute(file: File, uid: string): Promise<Omit<MenuItem, "id">[]> {
     const platos = await this.platoRepo.importarDesdeExcel(file)
 
     for (const plato of platos) {
