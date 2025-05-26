@@ -1,4 +1,4 @@
-import type { TeamMember } from "../entities/TeamMember";
+import type { TeamMember } from "@/core/entities/TeamMember";
 import type { TeamRepository } from '@/core/repositories/teamRepository';
 
 export class CreateTeamMemberUseCase {

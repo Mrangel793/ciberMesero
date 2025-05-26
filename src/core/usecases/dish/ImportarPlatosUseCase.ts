@@ -1,5 +1,5 @@
 import type { PlatoExcelImporter } from '@/core/repositories/PlatoExcelImporter';
-import type { PlatoRepository } from '../repositories/PlatoRepository';
+import type { PlatoRepository } from '@/core/repositories/PlatoRepository';
 import type { MenuItem } from '@/core/entities/MenuItem';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from '@/data/firebase/firebaseConfig';

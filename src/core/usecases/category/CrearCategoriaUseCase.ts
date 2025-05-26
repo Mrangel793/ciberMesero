@@ -1,4 +1,4 @@
-import type { CategoriaRepository } from "../repositories/CategoriaRepository";
+import type { CategoriaRepository } from "@/core/repositories/CategoriaRepository";
 
 export class CrearCategoriaUseCase {
   constructor(private categoriaRepo: CategoriaRepository) {}

@@ -1,4 +1,4 @@
-import type { TeamRepository } from "../repositories/teamRepository";
+import type { TeamRepository } from "@/core/repositories/teamRepository";
 
 export class DeleteTeamMemberUseCase {
   constructor(private teamRepository: TeamRepository) {}

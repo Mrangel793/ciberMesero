@@ -1,5 +1,5 @@
-import type { Category } from "../entities/Category";
-import type { CategoriaRepository } from "../repositories/CategoriaRepository";
+import type { Category } from "@/core/entities/Category";
+import type { CategoriaRepository } from "@/core/repositories/CategoriaRepository";
 
 export class ObtenerCategoriasUseCase {
   constructor(private readonly repository: CategoriaRepository) {}

@@ -1,5 +1,5 @@
 import type { MenuItem } from '@/core/entities/MenuItem';
-import type { PlatoRepository } from '../repositories/PlatoRepository';
+import type { PlatoRepository } from '@/core/repositories/PlatoRepository';
 
 export class CrearPlatoUseCase {
   constructor(private readonly repository: PlatoRepository) {}
