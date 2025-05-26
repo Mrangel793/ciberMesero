@@ -1,6 +1,6 @@
 
 import { ref } from 'vue';
-import { CrearCategoriaUseCase } from '@/core/usecases/CrearCategoriaUseCase';
+import { CrearCategoriaUseCase } from '@/core/usecases/category/CrearCategoriaUseCase';
 import { FirebaseCategoriaRepository } from '@/data/repositories/FirebaseCategoriaRepository';
 import { useAuthStore } from '@/stores/auth';
 

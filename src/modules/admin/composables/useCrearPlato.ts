@@ -1,7 +1,7 @@
-import { CrearPlatoUseCase } from '@/core/usecases/CrearPlatoUseCase'
-import { FirebaseMenuRepository } from '@/data/repositories/FirebaseMenuRepository'
-import { useAuthStore } from '@/stores/auth'
-import type { MenuItem } from '@/core/entities/MenuItem'
+import { CrearPlatoUseCase } from '@/core/usecases/dish/CrearPlatoUseCase';
+import { FirebaseMenuRepository } from '@/data/repositories/FirebaseMenuRepository';
+import { useAuthStore } from '@/stores/auth';
+import type { MenuItem } from '@/core/entities/MenuItem';
 
 const useCase = new CrearPlatoUseCase(new FirebaseMenuRepository())
 
@@ -14,7 +14,7 @@ export function useCrearPlato() {
 
     const newPlato: MenuItem = {
       ...plato,
-      id: Date.now()
+      id: Date.now().toString()
     }
 
     await useCase.execute(uid, newPlato)

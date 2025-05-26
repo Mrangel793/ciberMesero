@@ -1,9 +1,11 @@
-import { ref } from 'vue'
+import { ref } from 'vue';
 import { useRouter } from 'vue-router'
 import type { User } from '@/core/entities/User'
-import { FirebaseUserRepository } from '@/data/repositories/FirebaseUserRepository'
-import { RegisterUseCase } from '@/core/usecases/RegisterUseCase'
-const registerUseCase = new RegisterUseCase(new FirebaseUserRepository())
+import { FirebaseUserRepository } from '@/data/repositories/FirebaseUserRepository';
+import { RegisterUseCase } from '@/core/usecases/auth/RegisterUseCase';
+
+
+const registerUseCase = new RegisterUseCase(new FirebaseUserRepository());
 
 export const useRegister = () => {
   const errorMessage = ref('')

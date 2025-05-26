@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { FirebaseAuthRepository } from '@/data/repositories/FirebaseAuthRepository'
-import { LoginUseCase } from '@/core/usecases/LoginUseCase'
+import { LoginUseCase } from '@/core/usecases/auth/LoginUseCase'
 
 const loginUseCase = new LoginUseCase(new FirebaseAuthRepository())
 

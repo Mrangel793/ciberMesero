@@ -1,17 +1,17 @@
-import { ref, onMounted } from 'vue'
-import { ObtenerCategoriasUseCase } from '@/core/usecases/ObtenerCategoriasUseCase'
-import { FirebaseCategoriaRepository } from '@/data/repositories/FirebaseCategoriaRepository'
-import type { Category } from '@/core/entities/Category'
-import { useAuthStore } from '@/stores/auth'
+import { ref, onMounted } from 'vue';
+import { ObtenerCategoriasUseCase } from '@/core/usecases/category/ObtenerCategoriasUseCase';
+import { FirebaseCategoriaRepository } from '@/data/repositories/FirebaseCategoriaRepository';
+import type { Category } from '@/core/entities/Category';
+import { useAuthStore } from '@/stores/auth';
 
-const repo = new FirebaseCategoriaRepository()
-const useCase = new ObtenerCategoriasUseCase(repo)
+const repo = new FirebaseCategoriaRepository();
+const useCase = new ObtenerCategoriasUseCase(repo);
 
 export const useCategorias = () => {
-  const categorias = ref<Category[]>([])
-  const cargando = ref(true)
-  const error = ref('')
-  const auth = useAuthStore()
+  const categorias = ref<Category[]>([]);
+  const cargando = ref(true);
+  const error = ref('');
+  const auth = useAuthStore();
 
   const cargarCategorias = async () => {
     try {

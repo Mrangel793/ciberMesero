@@ -1,5 +1,5 @@
 import type { User } from '@/core/entities/User';
-import type { UserRepository } from '@/core/usecases/UserRepository';
+import type { UserRepository } from '@/core/repositories/UserRepository';
 import { auth, db } from '@/data/firebase/firebaseConfig';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';

@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { FirebaseMenuRepository } from '@/data/repositories/FirebaseMenuRepository';
-import { ObtenerPlatosUseCase } from '@/core/usecases/ObtenerPlatosUseCase';
+import { ObtenerPlatosUseCase } from '@/core/usecases/dish/ObtenerPlatosUseCase';
 import type { MenuItem } from '@/core/entities/MenuItem';
 
 const useCase = new ObtenerPlatosUseCase(new FirebaseMenuRepository());

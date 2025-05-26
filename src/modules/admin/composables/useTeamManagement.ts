@@ -3,11 +3,11 @@ import type { TeamMember } from '@/core/entities/TeamMember';
 import { FirebaseTeamRepository } from '@/data/repositories/FirebaseTeamRepository';
 
 //import Usecases
-import { CreateTeamMemberUseCase } from '@/core/usecases/CreateTeamMemberUseCase';
-import { GetAllTeamMembersUseCase } from '@/core/usecases/GetAllTeamMembersUseCase';
-import { UpdateTeamMemberUseCase } from '@/core/usecases/UpdateTeamMemberUseCase';
-import { DeleteTeamMemberUseCase } from '@/core/usecases/DeleteTeamMemberUseCase';
-import { GetTeamMemberByIdUseCase } from '@/core/usecases/GetTeamMemberByIdUseCase';
+import { CreateTeamMemberUseCase } from '@/core/usecases/team/CreateTeamMemberUseCase';
+import { GetAllTeamMembersUseCase } from '@/core/usecases/team/GetAllTeamMembersUseCase';
+import { UpdateTeamMemberUseCase } from '@/core/usecases/team/UpdateTeamMemberUseCase';
+import { DeleteTeamMemberUseCase } from '@/core/usecases/team/DeleteTeamMemberUseCase';
+import { GetTeamMemberByIdUseCase } from '@/core/usecases/team/GetTeamMemberByIdUseCase';
 
 const teamRepository = new FirebaseTeamRepository();
 
