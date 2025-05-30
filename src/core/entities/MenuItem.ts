@@ -10,7 +10,7 @@ export interface MenuItem {
     /** Precio actual */
     price: number
     /** Descripción dividida en líneas */
-    description?: string
+    description?: string[]
     /** Está en promoción? */
     onPromo?: boolean
     /** Categoría a la que pertenece */

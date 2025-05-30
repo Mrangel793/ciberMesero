@@ -129,7 +129,7 @@ async function onSubmit() {
     const newPlato = {
       name: form.name,
       price: form.price,
-      description: form.description.split('\n'),
+      description: form.description,
       image: form.preview || '',
       onPromo: false,
       category: form.category,

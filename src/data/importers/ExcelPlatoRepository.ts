@@ -60,8 +60,8 @@ export class ExcelPlatoImporter implements PlatoExcelImporter {
             const row = jsonData[i];
             // Omitir filas completamente vacías que puedan quedar después de blankrows: false
             if (row.every(cell => cell === null || String(cell).trim() === '')) {
-                console.warn(`[ExcelPlatoImporter] Fila ${i + 1} completamente vacía, ignorada.`);
-                continue;
+              console.warn(`[ExcelPlatoImporter] Fila ${i + 1} completamente vacía, ignorada.`);
+              continue;
             }
 
             // Asegurarse que la celda existe antes de intentar leerla
@@ -71,8 +71,8 @@ export class ExcelPlatoImporter implements PlatoExcelImporter {
 
             // Validar que las celdas de columnas requeridas no sean undefined
             if (nombreCrudo === undefined || precioCrudo === undefined || categoriaCruda === undefined) {
-                 console.warn(`[ExcelPlatoImporter] Fila ${i + 1} ignorada por celdas requeridas undefined (Nombre: ${nombreCrudo}, Precio: ${precioCrudo}, Categoría: ${categoriaCruda}).`);
-                 continue;
+              console.warn(`[ExcelPlatoImporter] Fila ${i + 1} ignorada por celdas requeridas undefined (Nombre: ${nombreCrudo}, Precio: ${precioCrudo}, Categoría: ${categoriaCruda}).`);
+              continue;
             }
 
             const price = parseFloat(String(precioCrudo));
@@ -96,9 +96,31 @@ export class ExcelPlatoImporter implements PlatoExcelImporter {
               }
             }
 
+            let descriptionArray: string[] | undefined = undefined;
+
+            // Verifica si la columna 'descripcion' existe y la celda tiene contenido
+            if (descriptionIndex !== -1 && row[descriptionIndex] !== undefined) {
+              const descriptionCellContent = String(row[descriptionIndex]).trim();
+
+              if (descriptionCellContent !== '') {
+                // Divide el string de la celda por el delimitador (ej. punto y coma)
+                // Luego, .map(s => s.trim()) quita espacios extra de cada ítem resultante
+                // Luego, .filter(s => s) elimina cualquier ítem vacío que pueda resultar del split
+                descriptionArray = descriptionCellContent
+                  .split('\n') // <--- ¡USA TU DELIMITADOR AQUÍ! (ej. ',', '\n')
+                  .map(item => item.trim())
+                  .filter(item => item.trim() !== ''); // Elimina ítems vacíos después de trim
+
+                // Si después de filtrar no queda nada, podrías querer que sea undefined o un array vacío
+                if (descriptionArray.length === 0) {
+                  descriptionArray = undefined; // o descriptionArray = []; si prefieres un array vacío
+                }
+              }
+            }
+
             const plato: Omit<MenuItem, 'id'> = {
               name: String(nombreCrudo).trim(),
-              description: (descriptionIndex !== -1 && row[descriptionIndex] !== undefined) ? String(row[descriptionIndex]).trim() : undefined,
+              description: descriptionArray,
               price: price,
               category: String(categoriaCruda).trim(),
               imageUrl: (imageUrlIndex !== -1 && row[imageUrlIndex] !== undefined) ? String(row[imageUrlIndex]).trim() : undefined,
