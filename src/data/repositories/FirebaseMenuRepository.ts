@@ -8,14 +8,53 @@ const getPlatosCollectionRef = (uidRestaurante: string) => {
 
 export class FirebaseMenuRepository {
   async guardarMenu(uidRestaurante: string, platosData: Omit<MenuItem, 'id'>[]): Promise<void> {
+    console.log("[guardarMenu] Iniciando. Número de platos a procesar:", platosData.length);
     const platosCollection = getPlatosCollectionRef(uidRestaurante);
     const batch = writeBatch(db);
 
-    platosData.forEach((plato) => {
+    platosData.forEach((platoOriginal, index) => {
       const newPlatoRef = doc(platosCollection); // Firestore genera el ID
-      batch.set(newPlatoRef, plato);
+      console.log(`[guardarMenu] Procesando platoOriginal ${index + 1}:`, JSON.stringify(platoOriginal)); // Log del objeto original
+
+      const platoParaGuardar: { [key: string]: any } = {};
+      (Object.keys(platoOriginal) as Array<keyof typeof platoOriginal>).forEach(key => {
+        const valor = platoOriginal[key];
+        if (valor !== undefined) {
+          platoParaGuardar[key] = valor;
+        } else {
+          // Log si se omite un campo undefined
+          console.log(`[guardarMenu] Plato ${index + 1}: Omitiendo campo '${key}' porque es undefined.`);
+        }
+      });
+
+      // --- LOG CRUCIAL ANTES DEL SET ---
+      console.log(`[guardarMenu] Objeto FINAL para batch.set() para plato ${index + 1} (doc ID ${newPlatoRef.id}):`, JSON.stringify(platoParaGuardar));
+      // También puedes loguear directamente el objeto si la consola lo expande bien:
+      // console.log(`[guardarMenu] Objeto FINAL para batch.set() para plato ${index + 1}:`, platoParaGuardar);
+
+      // VERIFICA SI 'imageUrl' ESTÁ PRESENTE Y ES UNDEFINED EN EL LOG ANTERIOR
+      if (platoParaGuardar.imageUrl === undefined && Object.prototype.hasOwnProperty.call(platoParaGuardar, 'imageUrl')) {
+          console.error(`[guardarMenu] ¡ALERTA! imageUrl es undefined en platoParaGuardar para el plato ${index + 1} pero la propiedad existe.`);
+      }
+
+
+      try {
+        batch.set(newPlatoRef, platoParaGuardar);
+      } catch (e) {
+        console.error("[guardarMenu] Error DENTRO de batch.set() (esto no debería pasar si la limpieza funciona):", e);
+        console.error("[guardarMenu] Objeto que causó error en batch.set:", JSON.stringify(platoParaGuardar));
+        throw e; // Re-lanza para que el catch general lo maneje
+      }
     });
-    await batch.commit();
+
+    try {
+      console.log("[guardarMenu] Intentando batch.commit()...");
+      await batch.commit();
+      console.log("[guardarMenu] Batch commit exitoso.");
+    } catch (e) {
+      console.error("[guardarMenu] Error durante batch.commit():", e);
+      throw e; // Re-lanza
+    }
   }
 
   async guardarPlato(uidRestaurante: string, platoData: Omit<MenuItem, 'id'>): Promise<string> {
