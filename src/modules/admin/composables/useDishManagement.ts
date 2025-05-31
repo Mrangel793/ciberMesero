@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import type { MenuItem } from '@/core/entities/MenuItem';
 import { FirebaseMenuRepository } from '@/data/repositories/FirebaseMenuRepository';
+import { getStorage, ref as storageRefFS, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { ExcelPlatoImporter } from '@/data/importers/ExcelPlatoRepository';
 
 // Importa los Use Cases
@@ -24,6 +25,7 @@ const importarPlatosUseCase = new ImportarPlatosUseCase(platoExcelImporter, plat
 const updatePlatoUseCase = new UpdatePlatoUseCase(platoRepository);
 const getPlatoByIdUseCase = new GetPlatoByIdUseCase(platoRepository);
 const deletePlatoUseCase = new DeletePlatoUseCase(platoRepository);
+const storage = getStorage();
 // const deleteVariosPlatosUseCase = new DeleteVariosPlatosUseCase(platoRepository);
 
 export function useDishManagement() {
@@ -36,9 +38,9 @@ export function useDishManagement() {
 
   const fetchAllDishes = async (uidRestaurante: string) => {
     if (!uidRestaurante) {
-        error.value = "UID del restaurante no proporcionado.";
-        dishes.value = [];
-        return;
+      error.value = "UID del restaurante no proporcionado.";
+      dishes.value = [];
+      return;
     }
     loading.value = true;
     error.value = null;
@@ -54,9 +56,9 @@ export function useDishManagement() {
 
   const fetchDishById = async (uidRestaurante: string, platoId: string) => {
     if (!uidRestaurante || !platoId) {
-        error.value = "UID del restaurante o ID del plato no proporcionado.";
-        currentDish.value = null;
-        return null;
+      error.value = "UID del restaurante o ID del plato no proporcionado.";
+      currentDish.value = null;
+      return null;
     }
     loading.value = true;
     error.value = null;
@@ -72,18 +74,43 @@ export function useDishManagement() {
     return null;
   };
 
-  const createDish = async (uidRestaurante: string, dishData: Omit<MenuItem, 'id'>) => {
+  // useDishManagement.ts - createDish
+  const createDish = async (
+    uidRestaurante: string,
+    dishData: Omit<MenuItem, 'id'>,
+    archivoImagen?: File | null
+  ): Promise<string> => {
     if (!uidRestaurante) throw new Error("UID del restaurante no proporcionado.");
     loading.value = true;
     error.value = null;
+    const datosParaUseCase = { ...dishData }; // Copia para modificar imageUrl
+
     try {
-      // Proporciona un id vacío o genera uno si es necesario
-      const newId = await crearPlatoUseCase.execute(uidRestaurante, { ...dishData, id: '' });
-      // Opcional: recargar o añadir localmente
-      await fetchAllDishes(uidRestaurante);
-      return newId;
+      console.log("Composable createDish: Recibido dishData:", dishData, "Archivo:", archivoImagen);
+
+      if (archivoImagen) {
+        console.log("Subiendo imagen:", archivoImagen.name);
+        const imagePath = `platos_imagenes/${uidRestaurante}/${Date.now()}_${archivoImagen.name}`;
+        const imageRef = storageRefFS(storage, imagePath);
+        const uploadResult = await uploadBytes(imageRef, archivoImagen);
+        const downloadURL = await getDownloadURL(uploadResult.ref);
+        datosParaUseCase.imageUrl = downloadURL; // Actualiza imageUrl en la copia
+        console.log("Imagen subida, URL:", downloadURL);
+      } else {
+        // Si no hay archivo, usa el imageUrl que ya venía (si venía) o será undefined
+        // y la limpieza en el repositorio se encargará del undefined.
+        datosParaUseCase.imageUrl = dishData.imageUrl;
+      }
+
+      // `datosParaUseCase` ahora tiene el imageUrl correcto (o undefined)
+      const newGeneratedId = await crearPlatoUseCase.execute(uidRestaurante, datosParaUseCase);
+
+      console.log("Composable createDish: Nuevo ID generado:", newGeneratedId);
+      await fetchAllDishes(uidRestaurante); // Asume que fetchAllDishes está definido en este scope
+      return newGeneratedId;
     } catch (err) {
       error.value = err instanceof Error ? err.message : String(err);
+      console.error("Composable createDish: Error:", err);
       throw err;
     } finally {
       loading.value = false;

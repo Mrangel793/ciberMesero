@@ -22,15 +22,12 @@ export class FirebaseMenuRepository {
         if (valor !== undefined) {
           platoParaGuardar[key] = valor;
         } else {
-          // Log si se omite un campo undefined
           console.log(`[guardarMenu] Plato ${index + 1}: Omitiendo campo '${key}' porque es undefined.`);
         }
       });
 
       // --- LOG CRUCIAL ANTES DEL SET ---
       console.log(`[guardarMenu] Objeto FINAL para batch.set() para plato ${index + 1} (doc ID ${newPlatoRef.id}):`, JSON.stringify(platoParaGuardar));
-      // También puedes loguear directamente el objeto si la consola lo expande bien:
-      // console.log(`[guardarMenu] Objeto FINAL para batch.set() para plato ${index + 1}:`, platoParaGuardar);
 
       // VERIFICA SI 'imageUrl' ESTÁ PRESENTE Y ES UNDEFINED EN EL LOG ANTERIOR
       if (platoParaGuardar.imageUrl === undefined && Object.prototype.hasOwnProperty.call(platoParaGuardar, 'imageUrl')) {
@@ -43,7 +40,7 @@ export class FirebaseMenuRepository {
       } catch (e) {
         console.error("[guardarMenu] Error DENTRO de batch.set() (esto no debería pasar si la limpieza funciona):", e);
         console.error("[guardarMenu] Objeto que causó error en batch.set:", JSON.stringify(platoParaGuardar));
-        throw e; // Re-lanza para que el catch general lo maneje
+        throw e;
       }
     });
 
@@ -53,13 +50,28 @@ export class FirebaseMenuRepository {
       console.log("[guardarMenu] Batch commit exitoso.");
     } catch (e) {
       console.error("[guardarMenu] Error durante batch.commit():", e);
-      throw e; // Re-lanza
+      throw e;
     }
   }
 
-  async guardarPlato(uidRestaurante: string, platoData: Omit<MenuItem, 'id'>): Promise<string> {
+  async guardarPlato(uidRestaurante: string, platoDataOriginal: Omit<MenuItem, 'id'>): Promise<string> {
     const platosCollection = getPlatosCollectionRef(uidRestaurante);
-    const docRef = await addDoc(platosCollection, platoData);
+
+    // --- INICIO DE LA LÓGICA PARA OMITIR CAMPOS UNDEFINED ---
+    const platoParaGuardar: { [key: string]: any } = {};
+    (Object.keys(platoDataOriginal) as Array<keyof typeof platoDataOriginal>).forEach(key => {
+      const valor = platoDataOriginal[key];
+      if (valor !== undefined) {
+        // Para MenuItem actual, no hay objetos anidados profundos que necesiten más limpieza aquí.
+        // Si 'description' es string[], se guardará como array (incluso si está vacío []).
+        // Si 'description' es undefined, se omitirá.
+        platoParaGuardar[key] = valor;
+      }
+    });
+    // --- FIN DE LA LÓGICA PARA OMITIR CAMPOS UNDEFINED ---
+
+    console.log("[FirebasePlatoRepository.guardarPlato] Objeto a guardar:", platoParaGuardar); // DEBUG
+    const docRef = await addDoc(platosCollection, platoParaGuardar); // Usa el objeto limpio
     return docRef.id;
   }
 

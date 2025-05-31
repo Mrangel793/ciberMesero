@@ -91,16 +91,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { useCrearPlato } from '@/modules/admin/composables/useCrearPlato'
+import { reactive, ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import { useDishManagement } from '../../composables/useDishManagement';
+import type { MenuItem } from '@/core/entities/MenuItem';
 
-const props = defineProps<{ visible: boolean }>()
+const props = defineProps<{ visible: boolean }>();
 const emit = defineEmits<{
-  (e: 'close'): void
-  (e: 'create'): void
-}>()
+  (e: 'close'): void;
+  (e: 'create'): void;
+}>();
 
-const { crear } = useCrearPlato()
+const authStore = useAuthStore();
+const { createDish } = useDishManagement();
+
 
 const form = reactive({
   file: null as File | null,
@@ -109,38 +113,81 @@ const form = reactive({
   name: '',
   price: 0,
   description: '',
-  category: ''
-})
+  category: '',
+  onPromo: false,
+  oldPrice: '',
+});
 
-const categories = ref(['Entradas', 'Hamburguesas', 'Bebidas', 'Postres'])
+
+const categories = ref(['Entradas', 'Hamburguesas', 'Bebidas', 'Postres', 'Pizzas', 'Comida rápida']);
 
 function onFileChange(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0] || null
-  form.file = file
-  if (file) {
-    const reader = new FileReader()
-    reader.onload = () => (form.preview = reader.result as string)
-    reader.readAsDataURL(file)
+  const targetFile = (e.target as HTMLInputElement).files?.[0] || null;
+  form.file = targetFile;
+  if (targetFile) {
+    const reader = new FileReader();
+    reader.onload = () => (form.preview = reader.result as string);
+    reader.readAsDataURL(targetFile);
+  } else {
+    form.preview = '';
   }
 }
 
 async function onSubmit() {
-  try {
-    const newPlato = {
-      name: form.name,
-      price: form.price,
-      description: form.description,
-      image: form.preview || '',
-      onPromo: false,
-      category: form.category,
-      id: Date.now()
-    }
 
-    await crear(newPlato)
-    emit('create')
-    emit('close')
+  if (!form.name || form.price <= 0 || !form.category) {
+    console.error('Validación fallida: Nombre, precio y categoría son requeridos.');
+    alert('Por favor, completa el nombre, precio y categoría.');
+    return;
+  }
+
+  const uidRestaurante = authStore.user?.uid;
+  if (!uidRestaurante) {
+    console.error('Error: UID de restaurante no disponible.');
+    alert('Error de autenticación. No se puede crear el platillo.');
+    return;
+  }
+
+
+  const platoDataParaCrear: Omit<MenuItem, 'id'> = {
+    name: form.name,
+    price: Number(form.price),
+    category: form.category,
+    description: form.description
+      ? form.description.split('\n').map(s => s.trim()).filter(s => s.length > 0)
+      : [],
+    imageUrl: undefined,
+    onPromo: form.onPromo,
+    oldPrice: form.oldPrice || undefined,
+  };
+
+  // Si tu `MenuItem` tiene `available`
+  if (typeof form.available === 'boolean') {
+    (platoDataParaCrear as any).available = form.available; // Añádelo si es parte de MenuItem
+  }
+
+
+  console.log("Modal: Datos para enviar a la función 'crear':", platoDataParaCrear);
+  console.log("Modal: Archivo seleccionado (form.file):", form.file);
+
+
+  try {
+    // Llama a la función 'crear' de tu composable useCrearPlato
+    // Pasa el archivo (form.file) si 'crear' está diseñado para manejar la subida de archivos.
+    // La firma de 'crear' en useCrearPlato determinará los argumentos exactos.
+    // Si 'crear' espera (uid, platoData, archivoOpcional):
+    await createDish(uidRestaurante, platoDataParaCrear, form.file);
+    // Si 'crear' solo espera (uid, platoData) y maneja el archivo de otra forma o no lo usa:
+    // await crear(uidRestaurante, platoDataParaCrear);
+
+    emit('create');
+    emit('close');
+    // Considera resetear el 'form' aquí
+    // Object.assign(form, { file: null, preview: '', available: true, ...valoresIniciales });
   } catch (e) {
-    console.error('Error al crear plato:', e)
+    console.error('Error al llamar a la función "crear" del composable:', e);
+    // Muestra un error específico en el modal basado en 'e'
+    alert(`Error al crear el platillo: ${(e as Error).message || 'Error desconocido'}`);
   }
 }
 </script>

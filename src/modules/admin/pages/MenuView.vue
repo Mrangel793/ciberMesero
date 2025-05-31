@@ -167,9 +167,10 @@ function addItem() {
 function editItem(id: string) {
   router.push(`/menu/${id}/editar`);
 }
-function handleCreateDish(payload: any) {
-  console.log('Crear platillo', payload);
-  cargarPlatos();
+function handleCreateDish() {
+  console.log('Evento "create" del modal de platillo recibido. Refrescando platos...');
+  showNewDishModal.value = false;
+  cargarPlatos(); // Refresca la lista de platos
 }
 function handleImport(file: File) {
   console.log('Importando archivo:', file);
