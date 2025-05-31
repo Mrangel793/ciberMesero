@@ -26,7 +26,7 @@ export class FirebaseMenuRepository {
         }
       });
 
-      // --- LOG CRUCIAL ANTES DEL SET ---
+
       console.log(`[guardarMenu] Objeto FINAL para batch.set() para plato ${index + 1} (doc ID ${newPlatoRef.id}):`, JSON.stringify(platoParaGuardar));
 
       // VERIFICA SI 'imageUrl' ESTÁ PRESENTE Y ES UNDEFINED EN EL LOG ANTERIOR
@@ -62,13 +62,10 @@ export class FirebaseMenuRepository {
     (Object.keys(platoDataOriginal) as Array<keyof typeof platoDataOriginal>).forEach(key => {
       const valor = platoDataOriginal[key];
       if (valor !== undefined) {
-        // Para MenuItem actual, no hay objetos anidados profundos que necesiten más limpieza aquí.
-        // Si 'description' es string[], se guardará como array (incluso si está vacío []).
-        // Si 'description' es undefined, se omitirá.
         platoParaGuardar[key] = valor;
       }
     });
-    // --- FIN DE LA LÓGICA PARA OMITIR CAMPOS UNDEFINED ---
+
 
     console.log("[FirebasePlatoRepository.guardarPlato] Objeto a guardar:", platoParaGuardar); // DEBUG
     const docRef = await addDoc(platosCollection, platoParaGuardar); // Usa el objeto limpio
@@ -80,13 +77,12 @@ export class FirebaseMenuRepository {
     const snapshot = await getDocs(platosCollection);
     return snapshot.docs.map(doc => ({
       id: doc.id,
-      ...(doc.data() as Omit<MenuItem, 'id'>), // El data() no incluye el id
+      ...(doc.data() as Omit<MenuItem, 'id'>),
     }));
   }
 
   async obtenerPlatoPorId(uidRestaurante: string, platoId: string): Promise<MenuItem | null> {
     const platoDocRef = doc(db, `users/${uidRestaurante}/platos/${platoId}`);
-    // O usando getPlatosCollectionRef: const platoDocRef = doc(getPlatosCollectionRef(uidRestaurante), platoId);
     const docSnap = await getDoc(platoDocRef);
 
     if (docSnap.exists()) {
@@ -99,10 +95,9 @@ export class FirebaseMenuRepository {
 
   async actualizarPlato(uidRestaurante: string, platoId: string, datosPlato: Partial<Omit<MenuItem, 'id'>>): Promise<void> {
     const platoDocRef = doc(db, `users/${uidRestaurante}/platos/${platoId}`);
-    // Asegurarse de no intentar actualizar el 'id' como un campo dentro del documento
     const dataToUpdate = { ...datosPlato };
     if ('id' in dataToUpdate) {
-        delete (dataToUpdate as any).id; // No debería estar aquí si el tipo es Partial<Omit<MenuItem, 'id'>>
+        delete (dataToUpdate as any).id;
     }
     await updateDoc(platoDocRef, dataToUpdate);
   }

@@ -74,7 +74,7 @@ export function useDishManagement() {
     return null;
   };
 
-  // useDishManagement.ts - createDish
+
   const createDish = async (
     uidRestaurante: string,
     dishData: Omit<MenuItem, 'id'>,
@@ -97,16 +97,14 @@ export function useDishManagement() {
         datosParaUseCase.imageUrl = downloadURL; // Actualiza imageUrl en la copia
         console.log("Imagen subida, URL:", downloadURL);
       } else {
-        // Si no hay archivo, usa el imageUrl que ya venía (si venía) o será undefined
-        // y la limpieza en el repositorio se encargará del undefined.
         datosParaUseCase.imageUrl = dishData.imageUrl;
       }
 
-      // `datosParaUseCase` ahora tiene el imageUrl correcto (o undefined)
+
       const newGeneratedId = await crearPlatoUseCase.execute(uidRestaurante, datosParaUseCase);
 
       console.log("Composable createDish: Nuevo ID generado:", newGeneratedId);
-      await fetchAllDishes(uidRestaurante); // Asume que fetchAllDishes está definido en este scope
+      await fetchAllDishes(uidRestaurante);
       return newGeneratedId;
     } catch (err) {
       error.value = err instanceof Error ? err.message : String(err);
@@ -123,7 +121,6 @@ export function useDishManagement() {
     error.value = null;
     try {
       const imported = await importarPlatosUseCase.execute(file, uidRestaurante);
-      // Opcional: recargar o añadir localmente
       await fetchAllDishes(uidRestaurante);
       return imported;
     } catch (err) {
@@ -140,8 +137,6 @@ export function useDishManagement() {
     error.value = null;
     try {
       await updatePlatoUseCase.execute(uidRestaurante, platoId, dishData);
-      // Opcional: recargar o actualizar localmente
-      // await fetchAllDishes(uidRestaurante);
     } catch (err) {
       error.value = err instanceof Error ? err.message : String(err);
       throw err;
@@ -156,7 +151,6 @@ export function useDishManagement() {
     error.value = null;
     try {
       await deletePlatoUseCase.execute(uidRestaurante, platoId);
-      // Opcional: recargar o eliminar localmente
       await fetchAllDishes(uidRestaurante);
     } catch (err) {
       error.value = err instanceof Error ? err.message : String(err);

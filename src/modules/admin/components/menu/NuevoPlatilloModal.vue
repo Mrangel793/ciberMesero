@@ -161,7 +161,7 @@ async function onSubmit() {
     oldPrice: form.oldPrice || undefined,
   };
 
-  // Si tu `MenuItem` tiene `available`
+
   if (typeof form.available === 'boolean') {
     (platoDataParaCrear as any).available = form.available; // Añádelo si es parte de MenuItem
   }
@@ -172,21 +172,11 @@ async function onSubmit() {
 
 
   try {
-    // Llama a la función 'crear' de tu composable useCrearPlato
-    // Pasa el archivo (form.file) si 'crear' está diseñado para manejar la subida de archivos.
-    // La firma de 'crear' en useCrearPlato determinará los argumentos exactos.
-    // Si 'crear' espera (uid, platoData, archivoOpcional):
     await createDish(uidRestaurante, platoDataParaCrear, form.file);
-    // Si 'crear' solo espera (uid, platoData) y maneja el archivo de otra forma o no lo usa:
-    // await crear(uidRestaurante, platoDataParaCrear);
-
     emit('create');
     emit('close');
-    // Considera resetear el 'form' aquí
-    // Object.assign(form, { file: null, preview: '', available: true, ...valoresIniciales });
   } catch (e) {
     console.error('Error al llamar a la función "crear" del composable:', e);
-    // Muestra un error específico en el modal basado en 'e'
     alert(`Error al crear el platillo: ${(e as Error).message || 'Error desconocido'}`);
   }
 }

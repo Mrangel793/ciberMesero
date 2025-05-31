@@ -58,13 +58,12 @@ export class ExcelPlatoImporter implements PlatoExcelImporter {
           console.log(`[ExcelPlatoImporter] Procesando ${jsonData.length - 1} filas de datos.`);
           for (let i = 1; i < jsonData.length; i++) {
             const row = jsonData[i];
-            // Omitir filas completamente vacías que puedan quedar después de blankrows: false
+
             if (row.every(cell => cell === null || String(cell).trim() === '')) {
               console.warn(`[ExcelPlatoImporter] Fila ${i + 1} completamente vacía, ignorada.`);
               continue;
             }
 
-            // Asegurarse que la celda existe antes de intentar leerla
             const nombreCrudo = row[nameIndex];
             const precioCrudo = row[priceIndex];
             const categoriaCruda = row[categoryIndex];
@@ -103,17 +102,12 @@ export class ExcelPlatoImporter implements PlatoExcelImporter {
               const descriptionCellContent = String(row[descriptionIndex]).trim();
 
               if (descriptionCellContent !== '') {
-                // Divide el string de la celda por el delimitador (ej. punto y coma)
-                // Luego, .map(s => s.trim()) quita espacios extra de cada ítem resultante
-                // Luego, .filter(s => s) elimina cualquier ítem vacío que pueda resultar del split
                 descriptionArray = descriptionCellContent
-                  .split('\n') // <--- ¡USA TU DELIMITADOR AQUÍ! (ej. ',', '\n')
+                  .split('\n')
                   .map(item => item.trim())
-                  .filter(item => item.trim() !== ''); // Elimina ítems vacíos después de trim
-
-                // Si después de filtrar no queda nada, podrías querer que sea undefined o un array vacío
+                  .filter(item => item.trim() !== '');
                 if (descriptionArray.length === 0) {
-                  descriptionArray = undefined; // o descriptionArray = []; si prefieres un array vacío
+                  descriptionArray = undefined;
                 }
               }
             }
@@ -127,21 +121,19 @@ export class ExcelPlatoImporter implements PlatoExcelImporter {
               onPromo: onPromoValue,
               oldPrice: oldPriceValue !== undefined ? String(oldPriceValue) : undefined,
             };
-            // console.log(`[ExcelPlatoImporter] Plato procesado de fila ${i + 1}:`, plato); // Descomentar para mucho detalle
             platos.push(plato);
           }
           console.log(`[ExcelPlatoImporter] Finalizado. Platos procesados: ${platos.length}`);
           resolve(platos);
         } catch (error) {
-          // Este console.error ya estaba, pero el `reject` es importante
           console.error("[ExcelPlatoImporter] Error interno procesando el archivo Excel:", error);
-          reject(error); // Asegúrate de que la promesa se rechace con el error
+          reject(error);
         }
       };
 
       reader.onerror = (error) => {
         console.error("[ExcelPlatoImporter] Error leyendo el archivo (FileReader.onerror):", error);
-        reject(error); // Asegúrate de que la promesa se rechace
+        reject(error);
       };
 
       reader.readAsBinaryString(file);

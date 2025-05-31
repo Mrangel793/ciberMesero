@@ -5,7 +5,6 @@ export class CrearPlatoUseCase {
   constructor(private readonly repository: PlatoRepository) {}
 
   async execute(uidRestaurante: string, platoData: Omit<MenuItem, 'id'>): Promise<string> {
-    // Validaciones de negocio aquí si es necesario
     if (!platoData.name || platoData.price <= 0) {
       throw new Error("Nombre y precio válido son requeridos para el plato.");
     }
