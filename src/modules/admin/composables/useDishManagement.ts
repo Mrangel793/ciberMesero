@@ -77,16 +77,16 @@ export function useDishManagement() {
 
   const createDish = async (
     uidRestaurante: string,
-    dishData: Omit<MenuItem, 'id'>,
+    platoData: Omit<MenuItem, 'id'>,
     archivoImagen?: File | null
   ): Promise<string> => {
     if (!uidRestaurante) throw new Error("UID del restaurante no proporcionado.");
     loading.value = true;
     error.value = null;
-    const datosParaUseCase = { ...dishData }; // Copia para modificar imageUrl
+    const datosParaUseCase = { ...platoData }; // Copia para modificar imageUrl
 
     try {
-      console.log("Composable createDish: Recibido dishData:", dishData, "Archivo:", archivoImagen);
+      console.log("Composable createDish: Recibido platoData:", platoData, "Archivo:", archivoImagen);
 
       if (archivoImagen) {
         console.log("Subiendo imagen:", archivoImagen.name);
@@ -97,7 +97,7 @@ export function useDishManagement() {
         datosParaUseCase.imageUrl = downloadURL; // Actualiza imageUrl en la copia
         console.log("Imagen subida, URL:", downloadURL);
       } else {
-        datosParaUseCase.imageUrl = dishData.imageUrl;
+        datosParaUseCase.imageUrl = platoData.imageUrl;
       }
 
 
@@ -131,21 +131,23 @@ export function useDishManagement() {
     }
   };
 
-  const updateDish = async (uidRestaurante: string, platoId: string, dishData: Partial<Omit<MenuItem, 'id'>>) => {
-    if (!uidRestaurante || !platoId) throw new Error("UID del restaurante o ID del plato no proporcionado.");
+  const updateDish = async (uidRestaurante: string, platoId: string, platoData: Partial<Omit<MenuItem, 'id'>>, imageFile: File | null) => {
     loading.value = true;
     error.value = null;
     try {
-      await updatePlatoUseCase.execute(uidRestaurante, platoId, dishData);
-    } catch (err) {
-      error.value = err instanceof Error ? err.message : String(err);
-      throw err;
+      // Aquí tu UpdatePlatoUseCase debería manejar la lógica de si la imagen cambia o no
+      // Por simplicidad, asumimos que el repositorio lo maneja.
+      await updatePlatoUseCase.execute(uidRestaurante, platoId, platoData, imageFile);
+    } catch (e) {
+      console.error('Error en useDishManagement -> updateDish:', e);
+      error.value = (e as Error).message;
+      throw e;
     } finally {
       loading.value = false;
     }
   };
 
-  const removeDish = async (uidRestaurante: string, platoId: string) => {
+  const deleteDish = async (uidRestaurante: string, platoId: string) => {
     if (!uidRestaurante || !platoId) throw new Error("UID del restaurante o ID del plato no proporcionado.");
     loading.value = true;
     error.value = null;
@@ -174,7 +176,7 @@ export function useDishManagement() {
     createDish,
     importDishesFromExcel,
     updateDish,
-    removeDish,
+    deleteDish,
     // removeMultipleDishes,
   };
 }

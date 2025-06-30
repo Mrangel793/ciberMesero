@@ -1,23 +1,16 @@
 <template>
   <transition name="fade">
-    <div
-      v-if="props.visible"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-    >
+    <div v-if="props.visible" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div class="bg-white rounded-xl max-w-lg w-full mx-4 p-6 relative">
         <!-- Cerrar -->
-        <button
-          @click="$emit('close')"
-          class="absolute top-4 right-4 text-gray-400 hover:text-red-500"
-        >
+        <button @click="$emit('close')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M6 18L18 6M6 6l12 12" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
         <h2 class="text-xl sm:text-2xl font-semibold text-center mb-6">
-          NUEVO PLATILLO
+          {{ modalTitle }}
         </h2>
 
         <form @submit.prevent="onSubmit" class="space-y-4">
@@ -28,8 +21,7 @@
               <input id="image" type="file" accept="image/*" class="hidden" @change="onFileChange" />
               <span class="text-gray-400">Cargar imagen</span>
             </label>
-            <img v-if="form.preview" :src="form.preview" alt="Preview"
-              class="mt-2 w-32 h-32 object-cover rounded-lg" />
+            <img v-if="form.preview" :src="form.preview" alt="Preview" class="mt-2 w-32 h-32 object-cover rounded-lg" />
           </div>
 
           <!-- Switch disponibilidad -->
@@ -40,8 +32,7 @@
               <div
                 class="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-orange-300 rounded-full peer peer-checked:bg-orange-600 transition">
               </div>
-              <div
-                class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
+              <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition peer-checked:translate-x-5">
               </div>
             </label>
           </div>
@@ -79,9 +70,8 @@
 
           <!-- Botón Agregar -->
           <div class="text-center mt-6">
-            <button type="submit"
-              class="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition">
-              Agregar
+            <button type="submit" class="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition">
+              {{ submitButtonText }}
             </button>
           </div>
         </form>
@@ -91,19 +81,25 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useDishManagement } from '../../composables/useDishManagement';
 import type { MenuItem } from '@/core/entities/MenuItem';
 
-const props = defineProps<{ visible: boolean }>();
+const props = defineProps<{ visible: boolean; plato?: MenuItem | null; }>();
 const emit = defineEmits<{
   (e: 'close'): void;
   (e: 'create'): void;
+  (e: 'update'): void;
 }>();
 
+//Composables y store
 const authStore = useAuthStore();
-const { createDish } = useDishManagement();
+const { createDish, updateDish } = useDishManagement();
+
+const isEditMode = computed(() => !!props.plato);
+const modalTitle = computed(() => isEditMode.value ? 'EDITAR PLATILLO' : 'NUEVO PLATILLO');
+const submitButtonText = computed(() => isEditMode.value ? 'Guardar Cambios' : 'Agregar');
 
 
 const form = reactive({
@@ -133,6 +129,33 @@ function onFileChange(e: Event) {
   }
 }
 
+// --- LÓGICA PARA RELLENAR EL FORMULARIO EN MODO EDICIÓN ---
+watch(() => props.plato, (newPlato) => {
+  if (newPlato) {
+    // Modo Editar: Rellenar el formulario
+    form.name = newPlato.name;
+    form.price = newPlato.price;
+    form.description = (newPlato.description || []).join('\n'); // Convertimos array a string para el textarea
+    form.category = newPlato.category;
+    form.available = newPlato.available ?? true;
+    form.preview = newPlato.imageUrl || '';
+    form.onPromo = newPlato.onPromo ?? false;
+    form.oldPrice = newPlato.oldPrice || '';
+    form.file = null; // Reseteamos el archivo
+  } else {
+    // Modo Crear: Resetear el formulario
+    form.name = '';
+    form.price = 0;
+    form.description = '';
+    form.category = '';
+    form.available = true;
+    form.preview = '';
+    form.file = null;
+    form.onPromo = false;
+    form.oldPrice = '';
+  }
+}, { immediate: true }); // `immediate` para que se ejecute al inicio
+
 async function onSubmit() {
 
   if (!form.name || form.price <= 0 || !form.category) {
@@ -148,6 +171,21 @@ async function onSubmit() {
     return;
   }
 
+  const datosDelPlato: Omit<MenuItem, 'id'> = {
+    name: form.name,
+    price: Number(form.price),
+    category: form.category,
+    description: form.description
+      ? form.description.split('\n').map(s => s.trim()).filter(s => s.length > 0)
+      : [],
+    // La imageUrl la manejará el composable `createDish`, así que puedes omitirla o dejarla undefined.
+    imageUrl: undefined,
+    onPromo: form.onPromo,
+    oldPrice: form.oldPrice || undefined,
+    available: form.available,
+    uid: uidRestaurante
+  };
+
 
   const platoDataParaCrear: Omit<MenuItem, 'id'> = {
     name: form.name,
@@ -159,6 +197,7 @@ async function onSubmit() {
     imageUrl: undefined,
     onPromo: form.onPromo,
     oldPrice: form.oldPrice || undefined,
+    uid: uidRestaurante
   };
 
 
@@ -172,12 +211,17 @@ async function onSubmit() {
 
 
   try {
-    await createDish(uidRestaurante, platoDataParaCrear, form.file);
-    emit('create');
+    if (isEditMode.value && props.plato) {
+      await updateDish(uidRestaurante, props.plato.id, platoDataParaCrear, form.file);
+      emit('update');
+    } else {
+      await createDish(uidRestaurante, datosDelPlato as Omit<MenuItem, 'id'>, form.file);
+      emit('create');
+    }
     emit('close');
   } catch (e) {
-    console.error('Error al llamar a la función "crear" del composable:', e);
-    alert(`Error al crear el platillo: ${(e as Error).message || 'Error desconocido'}`);
+    console.error(`Error al ${isEditMode.value ? 'actualizar' : 'crear'} el platillo:`, e);
+    alert(`Error: ${(e as Error).message}`);
   }
 }
 </script>
@@ -187,6 +231,7 @@ async function onSubmit() {
 .fade-leave-active {
   transition: opacity 0.2s;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;

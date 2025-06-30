@@ -15,4 +15,6 @@ export interface MenuItem {
     onPromo?: boolean
     /** Categoría a la que pertenece */
     category: string
+    available?: boolean
+    uid: string;
   }

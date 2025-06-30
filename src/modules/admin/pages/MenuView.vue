@@ -1,142 +1,160 @@
 <template>
 
-    <div class="p-6 min-h-screen bg-[#F9EBD9] space-y-6">
-      <!-- HEADER -->
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <h1 class="text-3xl font-bold text-orange-600">
-          MENÚ - {{ selectedRestaurant || 'Todos los restaurantes' }}
-        </h1>
-        <div class="flex flex-1 md:flex-none items-center gap-4">
-          <!-- Buscador -->
-          <div class="relative flex-1 md:flex-none">
-            <SearchIcon class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input v-model="searchQuery" type="text" placeholder="Buscar..."
-              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-200" />
-          </div>
+  <div class="p-6 min-h-screen bg-[#F9EBD9] space-y-6">
+    <!-- HEADER -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <h1 class="text-3xl font-bold text-orange-600">
+        MENÚ - {{ selectedRestaurant || 'Todos los restaurantes' }}
+      </h1>
+      <div class="flex flex-1 md:flex-none items-center gap-4">
+        <!-- Buscador -->
+        <div class="relative flex-1 md:flex-none">
+          <SearchIcon class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input v-model="searchQuery" type="text" placeholder="Buscar..."
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-200" />
+        </div>
 
+      </div>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="flex flex-wrap items-end justify-between mb-6 gap-y-4">
+      <div class="flex gap-12">
+        <!-- Filtro por restaurante -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Filtrar por restaurante
+          </label>
+          <select v-model="selectedRestaurant"
+            class="block w-64 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200">
+            <option value="">Seleccione...</option>
+            <option v-for="r in restaurants" :key="r" :value="r">
+              {{ r }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Filtro por categoría -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Filtrar por categoría
+          </label>
+          <select v-model="selectedCategory"
+            class="block w-64 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200">
+            <option value="">Seleccione...</option>
+            <option v-for="c in categories" :key="c" :value="c">
+              {{ c }}
+            </option>
+          </select>
         </div>
       </div>
 
-      <!-- FILTROS -->
-      <div class="flex flex-wrap items-end justify-between mb-6 gap-y-4">
-        <div class="flex gap-12">
-          <!-- Filtro por restaurante -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Filtrar por restaurante
-            </label>
-            <select v-model="selectedRestaurant"
-              class="block w-64 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200">
-              <option value="">Seleccione...</option>
-              <option v-for="r in restaurants" :key="r" :value="r">
-                {{ r }}
-              </option>
-            </select>
-          </div>
+      <!-- Botones alineados a la derecha -->
+      <div class="flex gap-4">
+        <button @click="importMenu"
+          class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition">
+          Importar menú
+        </button>
+        <button @click="addItem" class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition">
+          Agregar
+        </button>
+      </div>
+    </div>
 
-          <!-- Filtro por categoría -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Filtrar por categoría
-            </label>
-            <select v-model="selectedCategory"
-              class="block w-64 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-200">
-              <option value="">Seleccione...</option>
-              <option v-for="c in categories" :key="c" :value="c">
-                {{ c }}
-              </option>
-            </select>
-          </div>
+    <!-- loading -->
+    <div v-if="loading" class="text-center py-8 text-gray-600">
+      Cargando platos del menú...
+    </div>
+
+    <!-- Error -->
+    <div v-if="error" class="bg-red-100 text-red-700 px-4 py-2 rounded text-center">
+      {{ error }}
+    </div>
+
+    <!-- GRID DE ITEMS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div v-for="item in filteredMenuItems" :key="item.id"
+        class="relative bg-white rounded-lg shadow border border-gray-200 overflow-hidden flex flex-col">
+        <!-- Etiqueta PROMOCIÓN -->
+        <div v-if="item.onPromo"
+          class="absolute top-2 right-2 bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded">
+          Promoción
         </div>
 
-        <!-- Botones alineados a la derecha -->
-        <div class="flex gap-4">
-          <button @click="importMenu"
-            class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition">
-            Importar menú
-          </button>
-          <button @click="addItem" class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition">
-            Agregar
-          </button>
+        <!-- Imagen -->
+        <div class="h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
+          <img v-if="item.imageUrl" :src="item.imageUrl" alt="Imagen del platillo" class="object-cover w-full h-full" />
+          <div v-else class="text-gray-300">– sin imagen –</div>
         </div>
-      </div>
 
-      <!-- loading -->
-      <div v-if="loading" class="text-center py-8 text-gray-600">
-        Cargando platos del menú...
-      </div>
+        <!-- Contenido -->
+        <div class="p-4 flex-1 flex flex-col">
+          <span class="text-xs font-medium text-green-600 mb-1">Disponible</span>
+          <h2 class="font-semibold text-gray-800 mb-1">{{ item.name }}</h2>
 
-      <!-- Error -->
-      <div v-if="error" class="bg-red-100 text-red-700 px-4 py-2 rounded text-center">
-        {{ error }}
-      </div>
-
-      <!-- GRID DE ITEMS -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <div v-for="item in filteredMenuItems" :key="item.id"
-          class="relative bg-white rounded-lg shadow border border-gray-200 overflow-hidden flex flex-col">
-          <!-- Etiqueta PROMOCIÓN -->
-          <div v-if="item.onPromo"
-            class="absolute top-2 right-2 bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded">
-            Promoción
+          <!-- Precios -->
+          <div class="flex items-baseline gap-2 mb-2">
+            <span v-if="item.oldPrice" class="text-sm text-gray-400 line-through">
+              {{ item.oldPrice }}
+            </span>
+            <span class="text-lg font-bold text-red-600">{{ item.price }}</span>
           </div>
 
-          <!-- Imagen -->
-          <div class="h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
-            <img v-if="item.imageUrl" :src="item.imageUrl" alt="Imagen del platillo" class="object-cover w-full h-full" />
-            <div v-else class="text-gray-300">– sin imagen –</div>
-          </div>
+          <!-- Descripción -->
+          <ul class="text-sm text-gray-700 list-disc list-inside mb-4 flex-1">
+            <li v-for="(line, idx) in item.description" :key="idx">{{ line }}</li>
+          </ul>
 
-          <!-- Contenido -->
-          <div class="p-4 flex-1 flex flex-col">
-            <span class="text-xs font-medium text-green-600 mb-1">Disponible</span>
-            <h2 class="font-semibold text-gray-800 mb-1">{{ item.name }}</h2>
-
-            <!-- Precios -->
-            <div class="flex items-baseline gap-2 mb-2">
-              <span v-if="item.oldPrice" class="text-sm text-gray-400 line-through">
-                {{ item.oldPrice }}
-              </span>
-              <span class="text-lg font-bold text-red-600">{{ item.price }}</span>
-            </div>
-
-            <!-- Descripción -->
-            <ul class="text-sm text-gray-700 list-disc list-inside mb-4 flex-1">
-              <li v-for="(line, idx) in item.description" :key="idx">{{ line }}</li>
-            </ul>
-
-            <!-- Botón Editar -->
-            <button @click="editItem(item.id)"
-              class="mt-auto bg-orange-500 text-white text-sm py-2 rounded-lg hover:bg-orange-600 transition">
+          <!-- ACCIONES: EDITAR Y ELIMINAR -->
+          <div class="mt-auto flex gap-2">
+            <button @click="editItem(item)"
+              class="flex-1 bg-orange-500 text-white text-sm py-2 rounded-lg hover:bg-orange-600 transition">
               Editar
+            </button>
+            <button @click="confirmDeleteItem(item.id)"
+              class="bg-red-600 text-white p-2 rounded-lg hover:bg-red-700 transition">
+              <!-- Un ícono de basura sería ideal aquí -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
             </button>
           </div>
         </div>
       </div>
-      <!-- Modal de crear plato-->
-      <NuevoPlatilloModal :visible="showNewDishModal" @close="showNewDishModal = false" @create="handleCreateDish" />
-
-      <!-- Modal de Importación -->
-      <ImportMenuModal :visible="showImportModal" @close="showImportModal = false" @import="handleImport" />
     </div>
+    <!-- Modal de crear plato-->
+    <NuevoPlatilloModal :visible="showNewDishModal" :plato="platoToEdit" @close="closeModal" @create="handleDishUpsert"
+      @update="handleDishUpsert" />
+
+    <!-- Modal de Importación -->
+    <ImportMenuModal :visible="showImportModal" @close="showImportModal = false" @import="handleImport" />
+  </div>
 
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+//import { useRouter } from 'vue-router';
 import NuevoPlatilloModal from '../components/menu/NuevoPlatilloModal.vue';
 import ImportMenuModal from '../components/menu/ImportMenuModal.vue';
 import { useObtenerPlatos } from '../composables/useObtenerPlatos';
+import type { MenuItem } from '@/core/entities/MenuItem';
+import { useDishManagement } from '../composables/useDishManagement';
+import { useAuthStore } from '@/stores/auth';
 
 const searchQuery = ref('');
 const selectedRestaurant = ref('');
 const selectedCategory = ref('');
 const showNewDishModal = ref(false);
+const platoToEdit = ref<MenuItem | null>(null);
 const showImportModal = ref(false);
 
 // Composable de platos
 const { platos, loading, error, cargarPlatos } = useObtenerPlatos();
+const { deleteDish } = useDishManagement();
+const authStore = useAuthStore();
 
 // Cargar platos al montar la vista
 onMounted(() => {
@@ -157,21 +175,50 @@ const filteredMenuItems = computed(() =>
 const restaurants = ref(['Los fugitivos']);
 const categories = ref(['Entradas', 'Hamburguesas', 'Bebidas']);
 
-const router = useRouter();
+//const router = useRouter();
 function importMenu() {
+  platoToEdit.value = null;
   showImportModal.value = true;
 }
+
 function addItem() {
   showNewDishModal.value = true;
 }
-function editItem(id: string) {
-  router.push(`/menu/${id}/editar`);
+
+function editItem(item: MenuItem) {
+  platoToEdit.value = { ...item }; // Pasamos una copia del item para editar
+  showNewDishModal.value = true;
 }
-function handleCreateDish() {
-  console.log('Evento "create" del modal de platillo recibido. Refrescando platos...');
+
+async function confirmDeleteItem(platoId: string) {
+  if (confirm('¿Estás seguro de que quieres eliminar este platillo? Esta acción no se puede deshacer.')) {
+    const uidRestaurante = authStore.user?.uid;
+    if (!uidRestaurante) {
+      alert('Error de autenticación.');
+      return;
+    }
+    try {
+      await deleteDish(uidRestaurante, platoId);
+      alert('Platillo eliminado correctamente.');
+      cargarPlatos(); // Refrescamos la lista
+    } catch (e) {
+      alert(`Error al eliminar: ${(e as Error).message}`);
+    }
+  }
+}
+
+function closeModal() {
   showNewDishModal.value = false;
+  platoToEdit.value = null;
+}
+
+function handleDishUpsert() {
+  console.log('Platillo creado o actualizado. Refrescando lista...');
+  closeModal(); // Llama a la función para cerrar y limpiar
   cargarPlatos(); // Refresca la lista de platos
 }
+
+
 function handleImport(file: File) {
   console.log('Importando archivo:', file);
   cargarPlatos();
