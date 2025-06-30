@@ -1,20 +1,20 @@
+export interface PromotionDish {
+  id: string;
+  name: string;
+}
+
+
 export interface Promotion {
-    /** Identificador único */
-    id: number | string
-    /** Título */
-    title: string
-    /** Descripción breve */
-    description: string
-    /** URL o path al logo/imagen */
-    logo: string
-    /** Precio en texto (formato monetario) */
-    price: string
-    /** Dirección del restaurante */
-    address: string
-    /** Teléfono de contacto */
-    phone: string
-    /** Fecha de expiración en ISO (YYYY-MM-DD) */
-    expiryIso: string
-    /** Restaurante al que aplica */
-    restaurant: string
-  }
+  id: string;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  restaurantId: string;
+  restaurantName?: string;
+  address?: string;
+  phone?: string;
+  price?: number;
+  dishes: PromotionDish[];
+  startDate: string;
+  endDate: string;
+}
