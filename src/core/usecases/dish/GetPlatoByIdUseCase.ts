@@ -4,7 +4,7 @@ import type { PlatoRepository } from '@/core/repositories/PlatoRepository';
 export class GetPlatoByIdUseCase {
   constructor(private readonly platoRepository: PlatoRepository) {}
 
-  async execute(uidRestaurante: string, platoId: string): Promise<MenuItem | null> {
-    return this.platoRepository.obtenerPlatoPorId(uidRestaurante, platoId);
+  async execute(platoId: string): Promise<MenuItem | null> {
+    return this.platoRepository.obtenerPlatoPorId(platoId);
   }
 }

@@ -135,6 +135,7 @@
 </template>
 
 <script setup lang="ts">
+
 import { ref, computed, onMounted } from 'vue';
 //import { useRouter } from 'vue-router';
 import NuevoPlatilloModal from '../components/menu/NuevoPlatilloModal.vue';
@@ -143,6 +144,8 @@ import { useObtenerPlatos } from '../composables/useObtenerPlatos';
 import type { MenuItem } from '@/core/entities/MenuItem';
 import { useDishManagement } from '../composables/useDishManagement';
 import { useAuthStore } from '@/stores/auth';
+
+console.log("Z. Componente de Menú (setup).");
 
 const searchQuery = ref('');
 const selectedRestaurant = ref('');
@@ -155,6 +158,8 @@ const showImportModal = ref(false);
 const { platos, loading, error, cargarPlatos } = useObtenerPlatos();
 const { deleteDish } = useDishManagement();
 const authStore = useAuthStore();
+
+
 
 // Cargar platos al montar la vista
 onMounted(() => {
@@ -198,7 +203,7 @@ async function confirmDeleteItem(platoId: string) {
       return;
     }
     try {
-      await deleteDish(uidRestaurante, platoId);
+      await deleteDish(platoId);
       alert('Platillo eliminado correctamente.');
       cargarPlatos(); // Refrescamos la lista
     } catch (e) {

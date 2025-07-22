@@ -11,10 +11,14 @@ import { UpdatePromotionUseCase } from '@/core/usecases/promotion/UpdatePromotio
 import { DeletePromotionUseCase } from '@/core/usecases/promotion/DeletePromotionUseCase';
 import type { GetAllPromotionsInput } from '@/core/usecases/promotion/GetAllPromotionsUseCase';
 import type { CreatePromotionInput } from '@/core/usecases/promotion/CreatePromotionUseCase';
+import { useAuthStore } from '@/stores/auth';
+import { FirebaseMenuRepository } from '@/data/repositories/FirebaseMenuRepository';
 // Instancias
-const promotionRepository = new FirebasePromotionRepository();
+const authStore = useAuthStore();
+const promotionRepository = new FirebasePromotionRepository(authStore.user?.uid);
+const dishRepository = new FirebaseMenuRepository(authStore.user?.uid);
 
-const createPromotionUseCase = new CreatePromotionUseCase(promotionRepository);
+const createPromotionUseCase = new CreatePromotionUseCase(promotionRepository, dishRepository);
 const getAllPromotionsUseCase = new GetAllPromotionsUseCase(promotionRepository);
 const getPromotionByIdUseCase = new GetPromotionByIdUseCase(promotionRepository);
 const updatePromotionUseCase = new UpdatePromotionUseCase(promotionRepository);
@@ -26,11 +30,11 @@ export function usePromotionManagement() {
   const loading = ref(false);
   const error = ref<Error | string | null>(null);
 
-  const fetchAllPromotions = async (options?: GetAllPromotionsInput) => {
+  const fetchAllPromotions = async () => {
     loading.value = true;
     error.value = null;
     try {
-      promotions.value = await getAllPromotionsUseCase.execute(options);
+      promotions.value = await getAllPromotionsUseCase.execute();
     } catch (err) {
       error.value = err instanceof Error ? err.message : String(err);
       promotions.value = [];
@@ -53,12 +57,18 @@ export function usePromotionManagement() {
     return null;
   };
 
-  const createPromotion = async (uidRestaurante: string, promotionInputData: CreatePromotionInput): Promise<string> => {
+  const createPromotion = async (promotionInputData: CreatePromotionInput): Promise<string> => {
     loading.value = true;
     error.value = null;
+
+    // El UID ya no se necesita como parámetro, el repositorio/caso de uso lo tiene
+    if (!authStore.user?.uid) {
+      throw new Error("Usuario no autenticado. No se puede crear la promoción.");
+    }
+
     try {
-      console.log("[usePromotionManagement] Llamando a CreatePromotionUseCase con input:", promotionInputData);
-      const newId = await createPromotionUseCase.execute(uidRestaurante, promotionInputData);
+      // La llamada al caso de uso ahora solo necesita los datos del input
+      const newId = await createPromotionUseCase.execute(promotionInputData);
       return newId;
     } catch (err) {
       console.error("[usePromotionManagement] Error en createPromotion:", err);
@@ -69,7 +79,7 @@ export function usePromotionManagement() {
     }
   };
 
-  const updatePromotion = async (promotionId: string, promotionData: Partial<Omit<Promotion, 'id' | 'restaurantId' | 'restaurantName'>>) => {
+  const updatePromotion = async (promotionId: string, promotionData: Partial<Omit<Promotion, 'id'>>) => {
     loading.value = true;
     error.value = null;
     try {

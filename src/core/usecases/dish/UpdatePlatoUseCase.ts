@@ -5,7 +5,6 @@ export class UpdatePlatoUseCase {
   constructor(private readonly platoRepository: PlatoRepository) { }
 
   async execute(
-    uidRestaurante: string,
     platoId: string,
     datosPlato: Partial<Omit<MenuItem, 'id'>>,
     imageFile: File | null
@@ -19,7 +18,6 @@ export class UpdatePlatoUseCase {
     // Ahora pasamos todos los argumentos, incluido el imageFile, al repositorio.
     // El repositorio se encargará de la lógica de subida y actualización de la URL.
     return this.platoRepository.actualizarPlato(
-      uidRestaurante,
       platoId,
       datosPlato,
       imageFile // <-- Pasando el nuevo argumento

@@ -4,112 +4,66 @@ import type { MenuItem } from '@/core/entities/MenuItem';
 import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { menuItemConverter } from '../firebase/convertes/MenuItemConverter';
 
-
-const getPlatosCollectionRef = (uidRestaurante: string) => {
-  return collection(db, `users/${uidRestaurante}/platos`);
-};
-
 export class FirebaseMenuRepository {
+  private uid: string;
+  private platosCollectionRef;
 
+  constructor(uid?: string) {
+    if (!uid) {
+      throw new Error("UID del restaurante es requerido para FirebaseMenuRepository.");
+    }
+    this.uid = uid;
+    this.platosCollectionRef = collection(db, `users/${this.uid}/platos`);
+  }
 
-  async guardarMenu(uidRestaurante: string, platosData: Omit<MenuItem, 'id'>[]): Promise<void> {
-    console.log(`[guardarMenu] UID del restaurante para esta operación: ${uidRestaurante}`);
-    const platosCollectionRef = collection(db, 'users', uidRestaurante, 'platos');
+  async guardarMenu(platosData: Omit<MenuItem, 'id'>[]): Promise<void> {
     const batch = writeBatch(db);
-
-    for (const platoOriginal of platosData) {
-      const newPlatoRef = doc(platosCollectionRef);
-
-      // --- ¡ESTA ES LA LÍNEA CLAVE QUE FALTA EN TU LÓGICA ACTUAL! ---
-      // Añade el UID del dueño a cada objeto de plato.
-      const platoConDueño = {
-        ...platoOriginal,
-        uid: uidRestaurante
-      };
-      // -----------------------------------------------------------
-
-      // Ahora, limpia el objeto `platoConDueño` de valores undefined
-      const platoParaGuardar: { [key: string]: any } = {};
-      Object.keys(platoConDueño).forEach(key => {
-        const valor = platoConDueño[key as keyof typeof platoConDueño];
-        if (valor !== undefined) {
-          platoParaGuardar[key] = valor;
-        }
-      });
-
-      console.log(`[guardarMenu] Objeto FINAL para batch.set (con UID):`, JSON.stringify(platoParaGuardar));
-
-      // Ahora, cuando se ejecute la regla, `request.resource.data.uid` existirá y será correcto.
-      batch.set(newPlatoRef, platoParaGuardar);
+    for (const plato of platosData) {
+      const newDocRef = doc(this.platosCollectionRef); // Firestore genera la ref
+      batch.set(newDocRef, plato);
     }
-
-    try {
-      console.log(`[guardarMenu] Intentando commit de un batch con ${platosData.length} operaciones.`);
-      await batch.commit();
-      console.log("[guardarMenu] Batch commit exitoso. ¡FELICIDADES!");
-    } catch (e) {
-      console.error("[guardarMenu] Error durante batch.commit():", e);
-      throw e;
-    }
+    await batch.commit();
   }
 
 
-  async guardarPlato(uidRestaurante: string, platoDataOriginal: Omit<MenuItem, 'id'>): Promise<string> {
-    const platosCollection = getPlatosCollectionRef(uidRestaurante);
-
-    // --- INICIO DE LA LÓGICA PARA OMITIR CAMPOS UNDEFINED ---
+  async guardarPlato(platoData: Omit<MenuItem, 'id'>): Promise<string> {
     const platoParaGuardar: { [key: string]: any } = {};
-    (Object.keys(platoDataOriginal) as Array<keyof typeof platoDataOriginal>).forEach(key => {
-      const valor = platoDataOriginal[key];
+    Object.keys(platoData).forEach(key => {
+      const valor = platoData[key as keyof typeof platoData];
       if (valor !== undefined) {
         platoParaGuardar[key] = valor;
       }
     });
-
-
-    console.log("[FirebasePlatoRepository.guardarPlato] Objeto a guardar:", platoParaGuardar); // DEBUG
-    const docRef = await addDoc(platosCollection, platoParaGuardar); // Usa el objeto limpio
+    const docRef = await addDoc(this.platosCollectionRef, platoParaGuardar);
     return docRef.id;
   }
 
-  async obtenerMenu(uidRestaurante: string): Promise<MenuItem[]> {
-    // 1. Obtén la referencia a la colección como antes
-    const platosCollection = getPlatosCollectionRef(uidRestaurante);
-
-    // 2. Aplica el converter a la referencia
-    const platosCollectionWithConverter = platosCollection.withConverter(menuItemConverter);
-
-    // 3. Realiza la consulta
-    const snapshot = await getDocs(platosCollectionWithConverter);
-
-    // 4. Mapea los resultados. ¡Ahora cada 'doc.data()' ya es un objeto MenuItem tipado!
-    // No se necesita casting ni desestructuración manual.
+  async obtenerMenu(): Promise<MenuItem[]> {
+    const q = this.platosCollectionRef.withConverter(menuItemConverter);
+    const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => doc.data());
   }
 
-  async obtenerPlatoPorId(uidRestaurante: string, platoId: string): Promise<MenuItem | null> {
-    const platoDocRef = doc(db, `users/${uidRestaurante}/platos/${platoId}`);
+  async obtenerPlatoPorId(platoId: string): Promise<MenuItem | null> {
+    const platoDocRef = doc(this.platosCollectionRef, platoId);
     const docSnap = await getDoc(platoDocRef);
 
     if (docSnap.exists()) {
       return { id: docSnap.id, ...(docSnap.data() as Omit<MenuItem, 'id'>) };
     } else {
-      console.warn(`Plato con ID ${platoId} no encontrado para el restaurante ${uidRestaurante}`);
+      console.warn(`Plato con ID ${platoId} no encontrado.`);
       return null;
     }
   }
 
   async actualizarPlato(
-    uidRestaurante: string,
     platoId: string,
     datosPlato: Partial<Omit<MenuItem, 'id'>>,
     imageFile: File | null
   ): Promise<void> {
 
     // La ruta a tu documento parece ser 'users/.../platos/...' según tu código. La mantendré.
-    const platoDocRef = doc(db, `users/${uidRestaurante}/platos/${platoId}`);
-
-    // --- LÓGICA MEJORADA ---
+    const platoDocRef = doc(this.platosCollectionRef, platoId);
 
     // 1. Prepara el objeto de actualización SIN la propiedad 'imageUrl'
     //    para evitar el error de 'undefined'.
@@ -136,7 +90,7 @@ export class FirebaseMenuRepository {
       }
 
       // Subir la nueva imagen a Firebase Storage
-      const imagePath = `users/${uidRestaurante}/platos_images/${platoId}_${Date.now()}`;
+      const imagePath = `users/${this.uid}/platos_images/${platoId}_${Date.now()}`;
       const storageRef = ref(storage, imagePath);
       const uploadResult = await uploadBytes(storageRef, imageFile);
 
@@ -164,17 +118,17 @@ export class FirebaseMenuRepository {
     await updateDoc(platoDocRef, dataToUpdate);
   }
 
-  async eliminarPlato(uidRestaurante: string, platoId: string): Promise<void> {
-    const platoDocRef = doc(db, `users/${uidRestaurante}/platos/${platoId}`);
+  async eliminarPlato(platoId: string): Promise<void> {
+    const platoDocRef = doc(this.platosCollectionRef, platoId);
     await deleteDoc(platoDocRef);
   }
 
-  async eliminarVariosPlatos(uidRestaurante: string, platoIds: string[]): Promise<void> {
+  async eliminarVariosPlatos(platoIds: string[]): Promise<void> {
     if (platoIds.length === 0) return;
 
     const batch = writeBatch(db);
     platoIds.forEach(platoId => {
-      const platoDocRef = doc(db, `users/${uidRestaurante}/platos/${platoId}`);
+      const platoDocRef = doc(this.platosCollectionRef, platoId);
       batch.delete(platoDocRef);
     });
     await batch.commit();

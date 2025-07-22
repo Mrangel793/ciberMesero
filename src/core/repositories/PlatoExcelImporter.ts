@@ -1,5 +1,5 @@
-import type { MenuItem } from '@/core/entities/MenuItem'
+import type { RawMenuItemData } from '../entities/RawMenuItemData';
 
 export interface PlatoExcelImporter {
-  importarDesdeExcel(file: File): Promise<Omit<MenuItem, 'id'>[]>;
+  importarDesdeExcel(file: File): Promise<RawMenuItemData[]>;
 }

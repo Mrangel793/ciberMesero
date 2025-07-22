@@ -1,7 +1,6 @@
 import AdminLayout from '@/layaouts/AdminLayout.vue';
 import LandingView from '@/modules/home/pages/LandingView.vue'
 import { useAuthStore } from '@/stores/auth';
-import { watch } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router'
 
 
@@ -67,35 +66,30 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes
 });
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const isAuthenticated = !!authStore.user;
 
-  if (authStore.loading) {
-    // Esperar a que cargue la sesión
-    const unwatch = watch(
-      () => authStore.loading,
-      (loading) => {
-        if (!loading) {
-          unwatch();
-          // Redirigir si no hay usuario
-          if (!authStore.user && to.meta.requiresAuth) {
-            next({ name: 'Login' });
-          } else {
-            next();
-          }
-        }
-      }
-    );
-  } else {
-    if (!authStore.user && to.meta.requiresAuth) {
-      next({ name: 'Login' });
-    } else {
-      next();
-    }
+  // Si la ruta requiere autenticación y el usuario no está logueado...
+  if (requiresAuth && !isAuthenticated) {
+    // Redirige al login.
+    console.log("Acceso denegado. Redirigiendo al login...");
+    next({ name: 'Login' });
+  }
+  // Opcional: Si el usuario intenta ir a Login/Register pero ya está logueado...
+  else if (['Login', 'Register'].includes(to.name as string) && isAuthenticated) {
+    // Redirige al dashboard de admin.
+    console.log("Usuario ya logueado. Redirigiendo al dashboard...");
+    next({ name: 'AdminDashboard' });
+  }
+  // En cualquier otro caso, permite el acceso.
+  else {
+    next();
   }
 });
 

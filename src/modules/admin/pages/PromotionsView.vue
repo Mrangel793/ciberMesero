@@ -11,12 +11,6 @@
                         <input v-model="searchQuery" type="text" placeholder="Buscar..."
                             class="pl-10 pr-4 py-2 w-48 sm:w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-200" />
                     </div>
-                    <!-- Filtro de restaurante -->
-                    <select v-model="selectedRestaurant"
-                        class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-200">
-                        <option value="">Filtrar por restaurante</option>
-                        <option v-for="r in restaurants" :key="r" :value="r">{{ r }}</option>
-                    </select>
                     <!-- Fecha -->
                     <input v-model="selectedDate" type="date"
                         class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-200" />
@@ -50,17 +44,12 @@
                     <!-- Descripción -->
                     <p class="text-sm text-gray-700 flex-1">{{ promo.description }}</p>
 
-                    <!-- Datos -->
-                    <div class="mt-4 space-y-1 text-sm text-gray-600">
-                        <p><span class="font-medium">Dirección:</span> {{ promo.address }}</p>
-                        <p><span class="font-medium">Teléfono:</span> {{ promo.phone }}</p>
-                    </div>
 
                     <!-- Precio -->
                     <p class="mt-3 text-red-600 font-semibold">{{ promo.price }}</p>
 
                     <!-- Fecha límite -->
-                    <p class="text-xs text-gray-400 mb-4">Fecha límite: {{ formatDate(promo.expiryIso) }}</p>
+                    <p class="text-xs text-gray-400 mb-4">Válido hasta: {{ formatDate(promo.expiryIso) }}</p>
 
                     <!-- Botón editar -->
                     <button @click="editPromotion(promo.id)"
@@ -84,7 +73,8 @@ import {
     BellIcon,
     TrashIcon
 } from '@heroicons/vue/24/outline'
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
+
 
 /** Datos de usuario (ejemplo: avatar viene del store) */
 const auth = useAuthStore()
@@ -99,11 +89,7 @@ const showModal = ref(false)
 const searchQuery = ref('')
 const selectedRestaurant = ref('')
 const selectedDate = ref<string | null>(null)
-const restaurants = ref<string[]>([
-    'McDonalds',
-    'Burger King',
-    'Pizza House'
-])
+const router = useRouter()
 
 /** Lista dinámica de promociones (normalmente vendría de tu API) */
 const promotions = ref([
@@ -121,17 +107,27 @@ const promotions = ref([
     // … aquí más promociones …
 ])
 
-/** Filtrado reactivo */
-const filteredPromotions = computed(() =>
-    promotions.value.filter(p => {
-        const matchesSearch = p.title.toLowerCase().includes(searchQuery.value.toLowerCase())
-        const matchesRestaurant = !selectedRestaurant.value || p.restaurant === selectedRestaurant.value
-        const matchesDate = !selectedDate.value || p.expiryIso === selectedDate.value
-        return matchesSearch && matchesRestaurant && matchesDate
-    })
-)
 
-const router = useRouter()
+const { promotions, loading, error, fetchPromotions } = useGetAllPromotions();
+onMounted(() => {
+  fetchPromotions();
+});
+
+const { createPromotion, loading: creating, error: createError } = useCreatePromotion();
+
+/** Filtrado reactivo */
+const filteredPromotions = computed(() => {
+    if (!promotions.value) return [];
+    return promotions.value.filter(p => {
+        const matchesSearch = p.title.toLowerCase().includes(searchQuery.value.toLowerCase());
+        const matchesDate = !selectedDate.value || p.endDate === selectedDate.value;
+        return matchesSearch && matchesDate;
+    });
+});
+
+
+
+
 function addPromotion() {
     showModal.value = true;
 }
@@ -149,8 +145,16 @@ function formatDate(iso: string): string {
 }
 
 // Cuando la modal dispara 'create', haces tu lógica de crear en el backend
-function handleCreate(payload: any) {
-    console.log('Crear promo', payload)
-    // por ejemplo: promotions.value.push({ id: nextId, ...payload })
+async function handleCreate(formData: CreatePromotionInput) {
+  try {
+    await createPromotion(formData);
+    showModal.value = false;
+    fetchPromotions(); // Recargar la lista
+    alert('¡Promoción creada con éxito!');
+  } catch (e) {
+    alert(`Error al crear la promoción: ${(e as Error).message}`);
+  }
 }
+
+import { onMounted } from 'vue'
 </script>
