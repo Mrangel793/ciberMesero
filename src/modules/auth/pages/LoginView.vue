@@ -41,8 +41,12 @@
                     <button
                         class="texto w-full bg-[#FD7401] hover:bg-[#fb7e15] text-white py-2 px-4 rounded-lg focus:outline-none shadow-xl shadow-[#FD74014D]"
                         type="submit">
-                        Ingresar
+                        {{ isLoading ? 'Ingresando...' : 'Ingresar' }}
                     </button>
+                </div>
+
+                <div v-if="authStore.error" class="mb-4 p-3 bg-red-100 text-red-700 rounded">
+                    {{ authStore.error }}
                 </div>
             </form>
 

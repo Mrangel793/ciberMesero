@@ -94,4 +94,9 @@ router.beforeEach((to, from, next) => {
 });
 
 
-export default router
+// Navigation guard global para actualizar el título de la página
+router.afterEach((to) => {
+  document.title = (to.meta.title as string) || 'CiberMesero';
+});
+
+export default router;
