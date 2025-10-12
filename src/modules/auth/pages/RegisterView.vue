@@ -21,9 +21,23 @@
                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
           </div>
           <div class="flex items-center justify-center">
-            <button type="submit"
-                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >Registrarse</button>
+            <button
+                type="submit"
+                :disabled="isLoading"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
+            >{{ isLoading ? 'Registrando...' : 'Registrarse' }}</button>
+          </div>
+
+          <div v-if="authStore.error" class="mt-4 p-3 bg-red-100 text-red-700 rounded">
+            {{ authStore.error }}
+          </div>
+
+          <div class="text-center mt-4">
+            <button
+                type="button"
+                @click="goToLogin"
+                class="text-blue-500 hover:text-blue-700 font-semibold"
+            >¿Ya tienes cuenta? Inicia sesión</button>
           </div>
         </form>
       </div>
@@ -31,37 +45,41 @@
   </template>
 
 <script lang="ts" setup>
-import { auth } from '@/firebaseConfig';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { ref } from 'vue';
-import type { User } from '@/interfaces/user.interface';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/authStore';
+import { ROUTE_NAMES } from '@/shared/constants/routes';
+import { ROLES } from '@/shared/constants/roles';
+
+const router = useRouter();
+const authStore = useAuthStore();
 
 const name = ref<string>('');
 const email = ref<string>('');
-const password = ref('');
-const errorMessage = ref('');
+const password = ref<string>('');
+const isLoading = ref(false);
 
+const register = async () => {
+    if (!name.value || !email.value || !password.value) {
+        return;
+    }
 
-const register =  async() => {
-    errorMessage.value = '';
+    isLoading.value = true;
 
     try {
-        await createUserWithEmailAndPassword(auth, email.value, password.value);
-        console.log('User registered');
-    } catch (error:any) {
-        console.log(error.response.data.message);
-        errorMessage.value = error.response.data.message;
+        // Por defecto, todos los nuevos usuarios son clientes
+        await authStore.register(email.value, password.value, name.value, ROLES.CUSTOMER);
+
+        // Redirigir al dashboard de cliente
+        router.push({ name: ROUTE_NAMES.CUSTOMER_DASHBOARD });
+    } catch (error: any) {
+        console.error('Error al registrarse:', error);
+    } finally {
+        isLoading.value = false;
     }
+};
 
-    return{
-        name,
-        email,
-        password,
-        errorMessage,
-        register
-    }
-}
-
-
-
+const goToLogin = () => {
+    router.push({ name: ROUTE_NAMES.LOGIN });
+};
 </script>

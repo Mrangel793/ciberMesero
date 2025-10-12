@@ -1,6 +1,6 @@
 <template>
     <div class="min-h-screen flex justify-center items-center">
-        <div class="bg-gray-200 p-4 rounded-md shadow-md w-full max-w-md m-auto">
+        <div class="bg-gray-200 p-6 rounded-md shadow-md w-full max-w-md m-auto">
             <h1 class="text-2xl font-semibold text-center text-gray-700 mb-6">INICIAR SESIÓN</h1>
             <form @submit.prevent="login">
                 <div class="mb-4">
@@ -36,10 +36,15 @@
                 </div>
                 <div class="flex items-center justify-center mb-4">
                     <button
-                        class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        :disabled="isLoading"
+                        class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
                         type="submit">
-                        Ingresar
+                        {{ isLoading ? 'Ingresando...' : 'Ingresar' }}
                     </button>
+                </div>
+
+                <div v-if="authStore.error" class="mb-4 p-3 bg-red-100 text-red-700 rounded">
+                    {{ authStore.error }}
                 </div>
             </form>
 
@@ -55,6 +60,8 @@
 
             <div class="flex items-center justify-center">
                 <button
+                    @click="goToRegister"
+                    type="button"
                     class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
                     Registrarse
                 </button>
@@ -85,63 +92,49 @@
 </template>
 
 <script lang="ts" setup>
-
-import { signInWithEmailAndPassword, getAuth  } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/authStore';
+import { ROUTE_NAMES } from '@/shared/constants/routes';
 
-const auth = getAuth();
-const db = getFirestore();
-
-export const userRole = ref(null);
+const router = useRouter();
+const authStore = useAuthStore();
 
 const email = ref('');
 const password = ref('');
-const errorMessage = ref('');
+const isLoading = ref(false);
 
 const login = async () => {
-    errorMessage.value = '';
+    if (!email.value || !password.value) {
+        return;
+    }
+
+    isLoading.value = true;
 
     try {
-        const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
-        const user = userCredential.user;
-        console.log('Usuario autenticado con UID:', user.uid);
-        console.log('User logged in');
+        await authStore.login(email.value, password.value);
 
-        // 1. Obtener el UID del usuario autenticado
-        const uid = user.uid;
+        // Redirigir al dashboard correspondiente según el rol
+        const dashboardRoutes = {
+            admin: ROUTE_NAMES.ADMIN_DASHBOARD,
+            restaurant_owner: ROUTE_NAMES.RESTAURANT_DASHBOARD,
+            customer: ROUTE_NAMES.CUSTOMER_DASHBOARD,
+            waiter: ROUTE_NAMES.DASHBOARD
+        };
 
-        // 2. Consultar Firestore para obtener el documento del usuario
-        const userDocRef = doc(db, 'users', uid);
-        const userDocSnap = await getDoc(userDocRef);
+        const routeName = authStore.userRole
+            ? dashboardRoutes[authStore.userRole]
+            : ROUTE_NAMES.DASHBOARD;
 
-        if (userDocSnap.exists()) {
-            const userData = userDocSnap.data();
-            const fetchedUserRole = userData.role; // Obtiene el rol del documento
-            console.log('Rol del usuario obtenido de Firestore:', fetchedUserRole);
-
-            // 3. Guardar el rol en la ref 'userRole' (estado local del componente)
-            userRole.value = fetchedUserRole; // Asigna el rol a la ref 'userRole'
-
-        } else {
-            console.error('Documento de usuario no encontrado en Firestore para UID:', uid);
-            errorMessage.value = 'Error al obtener información del usuario.';
-            userRole.value = null; // Asegúrate de resetear userRole en caso de error
-            return; // Importante salir de la función si no se encuentra el documento
-        }
-
+        router.push({ name: routeName });
     } catch (error: any) {
-        console.error('Error al iniciar sesión:', error.code, error.message);
-        errorMessage.value = error.message;
-        userRole.value = null; // Asegúrate de resetear userRole en caso de error
-    }
-    return {
-        email,
-        password,
-        errorMessage,
-        login,
-        userRole
+        console.error('Error al iniciar sesión:', error);
+    } finally {
+        isLoading.value = false;
     }
 };
 
+const goToRegister = () => {
+    router.push({ name: ROUTE_NAMES.REGISTER });
+};
 </script>

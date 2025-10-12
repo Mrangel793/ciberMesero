@@ -20,8 +20,8 @@
           <a href="#" class="font-semibold text-white">CONTACTANOS</a>
         </div>
         <div class="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-12">
-          <a href="#" class="font-semibold text-white">Iniciar Sesión</a>
-          <a href="#" class="font-semibold text-white">Registrarse</a>
+          <router-link :to="{ name: 'login' }" class="font-semibold text-white">Iniciar Sesión</router-link>
+          <router-link :to="{ name: 'register' }" class="font-semibold text-white">Registrarse</router-link>
         </div>
       </nav>
 
