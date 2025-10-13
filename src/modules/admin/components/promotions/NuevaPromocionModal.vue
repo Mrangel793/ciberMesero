@@ -347,10 +347,10 @@ async function onSubmit() {
       endDate: form.endDate,
       address: form.address || undefined,
       phone: form.phone || undefined,
-      imageUrl: form.logoPreview || undefined, // O undefined y que el composable use form.logoFile
+      imageUrl: undefined, // No enviar el Base64, el repositorio subirá el archivo
     };
     try {
-      await createPromotion(targetRestaurantId, createPayload, form.logoFile);
+      await createPromotion(createPayload, targetRestaurantId, form.logoFile);
       emit('saved');
       emit('close');
     } catch (e) {

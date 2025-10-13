@@ -13,6 +13,8 @@ export interface CreatePromotionInput {
   dishIds: string[]; // IDs de los platos del menú incluidos
   startDate: string;
   endDate: string;
+  address?: string; // Opcional
+  phone?: string; // Opcional
 }
 
 export class CreatePromotionUseCase {
@@ -22,7 +24,7 @@ export class CreatePromotionUseCase {
   ) {}
 
   // Ya no necesita `restaurantId` como parámetro, se asume que el repositorio lo manejará
-  async execute(inputData: CreatePromotionInput): Promise<string> {
+  async execute(inputData: CreatePromotionInput, imageFile?: File | null): Promise<string> {
 
     // --- VALIDACIONES --- (Tus validaciones están excelentes, las mantenemos y adaptamos)
     if (!inputData.title?.trim()) { throw new Error("El título es obligatorio."); }
@@ -53,14 +55,16 @@ export class CreatePromotionUseCase {
     const promotionToCreate: Omit<Promotion, 'id'> = {
       title: inputData.title.trim(),
       description: inputData.description.trim(),
-      imageUrl: inputData.imageUrl?.trim() || undefined,
+      imageUrl: inputData.imageUrl?.trim() || '', // Vacío si no hay URL, el repositorio la actualizará
       price: inputData.price,
       dishes: promotionDishes,
       startDate: inputData.startDate,
       endDate: inputData.endDate,
+      address: inputData.address?.trim() || undefined,
+      phone: inputData.phone?.trim() || undefined,
     };
 
-    // Llamar al Repositorio para Crear
-    return this.promotionRepository.create(promotionToCreate);
+    // Llamar al Repositorio para Crear, pasando el archivo de imagen
+    return this.promotionRepository.create(promotionToCreate, imageFile);
   }
 }

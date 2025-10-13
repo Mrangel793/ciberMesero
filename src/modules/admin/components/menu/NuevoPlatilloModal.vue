@@ -212,10 +212,10 @@ async function onSubmit() {
 
   try {
     if (isEditMode.value && props.plato) {
-      await updateDish(uidRestaurante, props.plato.id, platoDataParaCrear, form.file);
+      await updateDish(props.plato.id, platoDataParaCrear, form.file);
       emit('update');
     } else {
-      await createDish(uidRestaurante, datosDelPlato as Omit<MenuItem, 'id'>, form.file);
+      await createDish(datosDelPlato as Omit<MenuItem, 'id'>, form.file);
       emit('create');
     }
     emit('close');

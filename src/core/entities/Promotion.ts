@@ -13,4 +13,6 @@ export interface Promotion {
   dishes: PromotionDish[];
   startDate: string;
   endDate: string;
+  address?: string;
+  phone?: string;
 }

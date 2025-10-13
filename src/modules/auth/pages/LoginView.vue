@@ -39,15 +39,13 @@
                 </div>
                 <div class="flex items-center justify-center mb-8">
                     <button
-                        class="texto w-full bg-[#FD7401] hover:bg-[#fb7e15] text-white py-2 px-4 rounded-lg focus:outline-none shadow-xl shadow-[#FD74014D]"
+                        :disabled="isLoading"
+                        class="texto w-full bg-[#FD7401] hover:bg-[#fb7e15] text-white py-2 px-4 rounded-lg focus:outline-none shadow-xl shadow-[#FD74014D] disabled:opacity-50 disabled:cursor-not-allowed"
                         type="submit">
                         {{ isLoading ? 'Ingresando...' : 'Ingresar' }}
                     </button>
                 </div>
 
-                <div v-if="authStore.error" class="mb-4 p-3 bg-red-100 text-red-700 rounded">
-                    {{ authStore.error }}
-                </div>
             </form>
 
             <!-- Alertas -->
@@ -110,11 +108,17 @@ import { useLogin } from '@/modules/auth/composables/useLogin';
 
 const email = ref('');
 const password = ref('');
+const isLoading = ref(false);
 
 const { login, errorMessage, successMessage } = useLogin();
 
-const handleLogin = () => {
-  login(email.value, password.value);
+const handleLogin = async () => {
+  isLoading.value = true;
+  try {
+    await login(email.value, password.value);
+  } finally {
+    isLoading.value = false;
+  }
 };
 </script>
 

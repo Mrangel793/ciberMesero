@@ -13,27 +13,40 @@ import type { GetAllPromotionsInput } from '@/core/usecases/promotion/GetAllProm
 import type { CreatePromotionInput } from '@/core/usecases/promotion/CreatePromotionUseCase';
 import { useAuthStore } from '@/stores/auth';
 import { FirebaseMenuRepository } from '@/data/repositories/FirebaseMenuRepository';
-// Instancias
-const authStore = useAuthStore();
-const promotionRepository = new FirebasePromotionRepository(authStore.user?.uid);
-const dishRepository = new FirebaseMenuRepository(authStore.user?.uid);
-
-const createPromotionUseCase = new CreatePromotionUseCase(promotionRepository, dishRepository);
-const getAllPromotionsUseCase = new GetAllPromotionsUseCase(promotionRepository);
-const getPromotionByIdUseCase = new GetPromotionByIdUseCase(promotionRepository);
-const updatePromotionUseCase = new UpdatePromotionUseCase(promotionRepository);
-const deletePromotionUseCase = new DeletePromotionUseCase(promotionRepository);
-
 export function usePromotionManagement() {
+  const authStore = useAuthStore();
   const promotions = ref<Promotion[]>([]);
   const currentPromotion = ref<Promotion | null>(null);
   const loading = ref(false);
   const error = ref<Error | string | null>(null);
 
+  /**
+   * Función auxiliar para obtener instancias de los casos de uso con el UID del usuario actual.
+   * Esto asegura que el repositorio siempre opere sobre los datos del restaurante correcto.
+   */
+  const getUseCases = () => {
+    const uid = authStore.user?.uid;
+    if (!uid) {
+      throw new Error("Usuario no autenticado. No se pueden realizar operaciones de promociones.");
+    }
+
+    const promotionRepository = new FirebasePromotionRepository(uid);
+    const dishRepository = new FirebaseMenuRepository(uid);
+
+    return {
+      createPromotionUseCase: new CreatePromotionUseCase(promotionRepository, dishRepository),
+      getAllPromotionsUseCase: new GetAllPromotionsUseCase(promotionRepository),
+      getPromotionByIdUseCase: new GetPromotionByIdUseCase(promotionRepository),
+      updatePromotionUseCase: new UpdatePromotionUseCase(promotionRepository, dishRepository),
+      deletePromotionUseCase: new DeletePromotionUseCase(promotionRepository),
+    };
+  };
+
   const fetchAllPromotions = async () => {
     loading.value = true;
     error.value = null;
     try {
+      const { getAllPromotionsUseCase } = getUseCases();
       promotions.value = await getAllPromotionsUseCase.execute();
     } catch (err) {
       error.value = err instanceof Error ? err.message : String(err);
@@ -47,6 +60,7 @@ export function usePromotionManagement() {
     loading.value = true;
     error.value = null;
     try {
+      const { getPromotionByIdUseCase } = getUseCases();
       currentPromotion.value = await getPromotionByIdUseCase.execute(promotionId);
       return currentPromotion.value;
     } catch (err) {
@@ -57,18 +71,18 @@ export function usePromotionManagement() {
     return null;
   };
 
-  const createPromotion = async (promotionInputData: CreatePromotionInput): Promise<string> => {
+  const createPromotion = async (
+    promotionInputData: CreatePromotionInput,
+    restaurantId?: string,
+    imageFile?: File | null
+  ): Promise<string> => {
     loading.value = true;
     error.value = null;
 
-    // El UID ya no se necesita como parámetro, el repositorio/caso de uso lo tiene
-    if (!authStore.user?.uid) {
-      throw new Error("Usuario no autenticado. No se puede crear la promoción.");
-    }
-
     try {
-      // La llamada al caso de uso ahora solo necesita los datos del input
-      const newId = await createPromotionUseCase.execute(promotionInputData);
+      const { createPromotionUseCase } = getUseCases();
+      // Pasamos tanto los datos como el archivo de imagen al caso de uso
+      const newId = await createPromotionUseCase.execute(promotionInputData, imageFile);
       return newId;
     } catch (err) {
       console.error("[usePromotionManagement] Error en createPromotion:", err);
@@ -79,11 +93,17 @@ export function usePromotionManagement() {
     }
   };
 
-  const updatePromotion = async (promotionId: string, promotionData: Partial<Omit<Promotion, 'id'>>) => {
+  const updatePromotion = async (
+    promotionId: string,
+    promotionData: Partial<Omit<Promotion, 'id'>>,
+    restaurantId?: string,
+    imageFile?: File | null
+  ) => {
     loading.value = true;
     error.value = null;
     try {
-      await updatePromotionUseCase.execute(promotionId, promotionData);
+      const { updatePromotionUseCase } = getUseCases();
+      await updatePromotionUseCase.execute(promotionId, promotionData, imageFile);
       // await fetchAllPromotions(); // O el componente padre refresca
     } catch (err) {
       error.value = err instanceof Error ? err.message : String(err);
@@ -97,6 +117,7 @@ export function usePromotionManagement() {
     loading.value = true;
     error.value = null;
     try {
+      const { deletePromotionUseCase } = getUseCases();
       await deletePromotionUseCase.execute(promotionId);
       // await fetchAllPromotions(); // O el componente padre refresca
     } catch (err) {

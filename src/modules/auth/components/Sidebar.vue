@@ -114,8 +114,8 @@ const menuRoutes = computed(() => {
 });
 console.log('menuRoutes', menuRoutes.value)
 
-function logout() {
-  auth.logout()
-  router.push('/login')
+async function logout() {
+  await auth.logout()
+  router.push('/')
 }
 </script>

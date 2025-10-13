@@ -1,4 +1,4 @@
-import AdminLayout from '@/layaouts/AdminLayout.vue';
+import AdminLayout from '@/layouts/AdminLayout.vue';
 import LandingView from '@/modules/home/pages/LandingView.vue'
 import { useAuthStore } from '@/stores/auth';
 import { createRouter, createWebHistory } from 'vue-router'
@@ -70,8 +70,15 @@ const router = createRouter({
   routes
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
+
+  // Esperar a que el estado de autenticación esté listo
+  if (!authStore.authReady) {
+    console.log("Esperando a que la autenticación esté lista...");
+    await authStore.initAuthListener();
+  }
+
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const isAuthenticated = !!authStore.user;
 

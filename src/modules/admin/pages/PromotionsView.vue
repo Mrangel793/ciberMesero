@@ -35,9 +35,12 @@
                         <TrashIcon class="w-5 h-5" />
                     </button>
 
-                    <!-- Logo + título -->
+                    <!-- Imagen + título -->
                     <div class="flex items-center mb-4 space-x-3">
-                        <img :src="promo.logo" alt="logo" class="w-12 h-12 object-cover rounded" />
+                        <img v-if="promo.imageUrl" :src="promo.imageUrl" alt="logo" class="w-12 h-12 object-cover rounded" />
+                        <div v-else class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center text-gray-400">
+                            <span class="text-xs">Sin img</span>
+                        </div>
                         <h2 class="text-lg font-semibold text-gray-800">{{ promo.title }}</h2>
                     </div>
 
@@ -46,10 +49,10 @@
 
 
                     <!-- Precio -->
-                    <p class="mt-3 text-red-600 font-semibold">{{ promo.price }}</p>
+                    <p class="mt-3 text-red-600 font-semibold">${{ promo.price }}</p>
 
                     <!-- Fecha límite -->
-                    <p class="text-xs text-gray-400 mb-4">Válido hasta: {{ formatDate(promo.expiryIso) }}</p>
+                    <p class="text-xs text-gray-400 mb-4">Válido hasta: {{ formatDate(promo.endDate) }}</p>
 
                     <!-- Botón editar -->
                     <button @click="editPromotion(promo.id)"
@@ -59,61 +62,45 @@
                 </div>
             </div>
             <!-- Aquí inyectamos la modal -->
-            <NuevaPromocionModal :visible="showModal" @close="showModal = false" @create="handleCreate" />
+            <NuevaPromocionModal
+                :visible="showModal"
+                :promotionToEdit="promotionToEdit"
+                @close="closeModal"
+                @saved="handleSaved" />
         </div>
 
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import NuevaPromocionModal from '../components/promotions/NuevaPromocionModal.vue'
 import {
-    // SearchIcon,
+    MagnifyingGlassIcon as SearchIcon,
     BellIcon,
     TrashIcon
 } from '@heroicons/vue/24/outline'
-import { useRouter } from 'vue-router';
+import { usePromotionManagement } from '@/modules/admin/composables/usePromotionManagement';
+import type { Promotion } from '@/core/entities/Promotion';
 
 
 /** Datos de usuario (ejemplo: avatar viene del store) */
 const auth = useAuthStore()
-const user = {
-    // avatar: auth.user?.avatar || 'https://i.pravatar.cc/40'
-}
 
 // Ref que controla la modal
 const showModal = ref(false)
+const promotionToEdit = ref<Promotion | null>(null)
 
 /** Controles de búsqueda y filtros */
 const searchQuery = ref('')
 const selectedRestaurant = ref('')
 const selectedDate = ref<string | null>(null)
-const router = useRouter()
 
-/** Lista dinámica de promociones (normalmente vendría de tu API) */
-const promotions = ref([
-    {
-        id: 1,
-        title: '¡Combo Especial por Tiempo Limitado!',
-        description: 'Disfruta de tu combo favorito con hamburguesa, papas y bebida a un precio increíble. ¡Aprovecha, la oferta es por tiempo limitado!',
-        logo: '@/assets/logos/mcdonalds.png',
-        price: '$20.000',
-        address: 'Cra. 36 #44-73-95, Bucaramanga, Norte de Santander',
-        phone: '3202243903',
-        expiryIso: '2025-02-04',
-        restaurant: 'McDonalds'
-    }
-    // … aquí más promociones …
-])
-
-
-const { promotions, loading, error, fetchPromotions } = useGetAllPromotions();
+/** Lista dinámica de promociones desde la API */
+const { promotions, loading, error, fetchAllPromotions, removePromotion } = usePromotionManagement();
 onMounted(() => {
-  fetchPromotions();
+  fetchAllPromotions();
 });
-
-const { createPromotion, loading: creating, error: createError } = useCreatePromotion();
 
 /** Filtrado reactivo */
 const filteredPromotions = computed(() => {
@@ -129,13 +116,38 @@ const filteredPromotions = computed(() => {
 
 
 function addPromotion() {
+    promotionToEdit.value = null;
     showModal.value = true;
 }
-function editPromotion(id: number) {
-    router.push(`/promociones/${id}/editar`)
+
+function editPromotion(id: string) {
+    const promo = promotions.value.find(p => p.id === id);
+    if (promo) {
+        promotionToEdit.value = promo;
+        showModal.value = true;
+    }
 }
-function deletePromotion(id: number) {
-    promotions.value = promotions.value.filter(p => p.id !== id)
+
+async function deletePromotion(id: string) {
+    if (!confirm('¿Estás seguro de que quieres eliminar esta promoción?')) return;
+
+    try {
+        await removePromotion(id);
+        await fetchAllPromotions();
+        alert('Promoción eliminada correctamente');
+    } catch (e) {
+        alert(`Error al eliminar: ${(e as Error).message}`);
+    }
+}
+
+function closeModal() {
+    showModal.value = false;
+    promotionToEdit.value = null;
+}
+
+async function handleSaved() {
+    await fetchAllPromotions();
+    alert('¡Promoción guardada con éxito!');
 }
 
 /** Formatea 'YYYY-MM-DD' a 'DD/MM/YYYY' */
@@ -143,18 +155,4 @@ function formatDate(iso: string): string {
     const d = new Date(iso)
     return d.toLocaleDateString('es-CO')
 }
-
-// Cuando la modal dispara 'create', haces tu lógica de crear en el backend
-async function handleCreate(formData: CreatePromotionInput) {
-  try {
-    await createPromotion(formData);
-    showModal.value = false;
-    fetchPromotions(); // Recargar la lista
-    alert('¡Promoción creada con éxito!');
-  } catch (e) {
-    alert(`Error al crear la promoción: ${(e as Error).message}`);
-  }
-}
-
-import { onMounted } from 'vue'
 </script>

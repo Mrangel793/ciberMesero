@@ -41,7 +41,31 @@ export class FirebasePromotionRepository implements PromotionRepository {
     return cleanedData;
   }
 
-  async create(promotionData: Omit<Promotion, 'id'>): Promise<string> {
+  async create(promotionData: Omit<Promotion, 'id'>, imageFile?: File | null): Promise<string> {
+    // Si hay archivo de imagen, lo subimos primero
+    let imageUrl = promotionData.imageUrl;
+
+    if (imageFile) {
+      // Crear primero el documento para obtener su ID
+      const tempDocRef = await addDoc(this.collectionRef, { ...promotionData, imageUrl: '' });
+      const promotionId = tempDocRef.id;
+
+      // Subir la imagen a Storage con el ID del documento
+      const imagePath = `users/${this.uid}/promotions_images/${promotionId}_${Date.now()}`;
+      const imageRef = storageRef(storage, imagePath);
+      await uploadBytes(imageRef, imageFile);
+
+      // Obtener la URL de descarga
+      imageUrl = await getDownloadURL(imageRef);
+
+      // Actualizar el documento con la URL de la imagen
+      await updateDoc(tempDocRef, { imageUrl });
+
+      console.log("Nueva imagen de promoción subida. URL:", imageUrl);
+      return promotionId;
+    }
+
+    // Si no hay archivo, crear el documento normalmente
     const docRef = await addDoc(this.collectionRef, promotionData);
     return docRef.id;
   }

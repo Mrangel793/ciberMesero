@@ -10,6 +10,9 @@ export interface UpdatePromotionInput {
   dishIds?: string[];
   startDate?: string;
   endDate?: string;
+  address?: string;
+  phone?: string;
+  imageUrl?: string;
 }
 
 export class UpdatePromotionUseCase {
@@ -60,6 +63,12 @@ export class UpdatePromotionUseCase {
         throw new Error("El precio debe ser un número positivo.");
       }
       dataToPersist.price = updateData.price;
+    }
+    if (updateData.address !== undefined) {
+      dataToPersist.address = updateData.address.trim() || undefined;
+    }
+    if (updateData.phone !== undefined) {
+      dataToPersist.phone = updateData.phone.trim() || undefined;
     }
 
 

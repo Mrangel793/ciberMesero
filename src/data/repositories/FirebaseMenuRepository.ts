@@ -65,10 +65,15 @@ export class FirebaseMenuRepository {
     // La ruta a tu documento parece ser 'users/.../platos/...' según tu código. La mantendré.
     const platoDocRef = doc(this.platosCollectionRef, platoId);
 
-    // 1. Prepara el objeto de actualización SIN la propiedad 'imageUrl'
-    //    para evitar el error de 'undefined'.
-    const { imageUrl: _imageUrl, ...otrosDatos } = datosPlato;
-    const dataToUpdate: { [key: string]: any } = { ...otrosDatos };
+    // 1. Prepara el objeto de actualización filtrando TODOS los valores undefined
+    //    Firestore no permite campos con valor undefined
+    const dataToUpdate: { [key: string]: any } = {};
+    Object.keys(datosPlato).forEach(key => {
+      const valor = datosPlato[key as keyof typeof datosPlato];
+      if (valor !== undefined && key !== 'imageUrl') {
+        dataToUpdate[key] = valor;
+      }
+    });
 
     // 2. Si se proporcionó un nuevo archivo de imagen, lo procesamos.
     if (imageFile) {
