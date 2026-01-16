@@ -8,3 +8,11 @@ html, body, #app {
     margin: 0;
     padding: 0;
   }
+
+  .titulo {
+    font-family: 'Luckiest Guy', cursive;
+  }
+
+  .texto {
+    font-family: 'Libre Bodoni';
+  }
