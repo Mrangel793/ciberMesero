@@ -32,7 +32,7 @@
                   ? 'bg-orange-500 text-white'
                   : 'group hover:bg-orange-50'
               ]">
-                <component :is="icons[r.meta.icon]" :class="[
+                <component :is="icons[r.meta.icon as keyof typeof icons]" :class="[
                   'w-5 h-5 transition',
                   isActive ? 'text-white' : 'text-orange-500'
                 ]" />
@@ -106,9 +106,11 @@ const router = useRouter()
 // })
 const menuRoutes = computed(() => {
   const role = auth.user?.role;
+  if (!role) return [];
+  
   return router.getRoutes().filter(r =>
     r.meta?.showInMenu !== false &&
-    r.meta?.roles?.includes(role) &&
+    (r.meta?.roles as string[] | undefined)?.includes(role) &&
     r.path.startsWith('/admin')
   );
 });

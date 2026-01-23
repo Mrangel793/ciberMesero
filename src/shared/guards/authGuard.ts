@@ -1,5 +1,5 @@
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from '@/stores/auth';
 import { ROUTE_NAMES, ROUTE_PATHS } from '@/shared/constants/routes';
 import type { UserRole } from '@/shared/constants/roles';
 
@@ -14,8 +14,8 @@ export const authGuard = async (
   const authStore = useAuthStore();
 
   // Esperar a que se inicialice el estado de autenticación
-  if (!authStore.isInitialized) {
-    await authStore.initializeAuth();
+  if (!authStore.authReady) {
+    await authStore.initAuthListener();
   }
 
   if (!authStore.isAuthenticated) {
@@ -37,13 +37,13 @@ export const guestGuard = async (
   const authStore = useAuthStore();
 
   // Esperar a que se inicialice el estado de autenticación
-  if (!authStore.isInitialized) {
-    await authStore.initializeAuth();
+  if (!authStore.authReady) {
+    await authStore.initAuthListener();
   }
 
   if (authStore.isAuthenticated) {
     // Si ya está autenticado, redirigir al dashboard según su rol
-    next({ path: getDashboardByRole(authStore.userRole) });
+    next({ path: getDashboardByRole(authStore.userRole as UserRole) });
   } else {
     next();
   }
@@ -61,8 +61,8 @@ export const roleGuard = (allowedRoles: UserRole[]) => {
     const authStore = useAuthStore();
 
     // Esperar a que se inicialice el estado de autenticación
-    if (!authStore.isInitialized) {
-      await authStore.initializeAuth();
+    if (!authStore.authReady) {
+      await authStore.initAuthListener();
     }
 
     if (!authStore.isAuthenticated) {
@@ -70,9 +70,10 @@ export const roleGuard = (allowedRoles: UserRole[]) => {
       return;
     }
 
-    if (!authStore.userRole || !allowedRoles.includes(authStore.userRole)) {
+    const role = authStore.userRole as UserRole;
+    if (!role || !allowedRoles.includes(role)) {
       // Redirigir al dashboard del usuario si no tiene permisos
-      next({ path: getDashboardByRole(authStore.userRole) });
+      next({ path: getDashboardByRole(role) });
     } else {
       next();
     }

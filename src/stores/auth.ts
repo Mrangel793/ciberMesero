@@ -41,8 +41,13 @@ export const useAuthStore = defineStore('auth', {
           this.user = UserMapper.toAuthenticatedUser(userSnap.data(), firebaseUser.uid);
           console.log("Usuario encontrado y mapeado correctamente");
 
-          // Persistir en localStorage
-          this.persistAuthState();
+          // DEBUG: Obtener y guardar token inmediatamente para pruebas manuales
+          const token = await firebaseUser.getIdToken();
+          localStorage.setItem('debug_auth_token', token);
+          console.log('🔑 Token de sesión actualizado (copiar para Postman):', token);
+
+          // Persistir en memoria (Pinia)
+          // this.persistAuthState(); // No es necesario con Firebase
         } else {
           console.warn(`No se encontró documento de usuario para UID: ${firebaseUser.uid}`);
           throw new UnauthorizedError('Usuario no encontrado en la base de datos');
@@ -129,25 +134,20 @@ export const useAuthStore = defineStore('auth', {
     },
 
     /**
-     * Persiste el estado de autenticación en localStorage
+     * Persiste el estado de autenticación (Deprecado: Firebase maneja esto)
      */
     persistAuthState(): void {
-      if (this.user) {
-        localStorage.setItem('userRole', this.user.role);
-        localStorage.setItem('userName', this.user.name);
-        localStorage.setItem('userUid', this.user.uid);
-      }
+      // Firebase maneja la persistencia automáticamente
     },
 
     /**
-     * Limpia el estado de autenticación y localStorage
+     * Limpia el estado de autenticación
      */
     clearAuthState(): void {
       this.user = null;
       this.error = null;
-      localStorage.removeItem('userRole');
-      localStorage.removeItem('userName');
-      localStorage.removeItem('userUid');
+      // DEBUG: Limpiar token manual
+      localStorage.removeItem('debug_auth_token');
     },
 
     /**
